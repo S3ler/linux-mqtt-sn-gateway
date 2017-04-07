@@ -7,8 +7,16 @@
 
 
 #include <System.h>
+#ifndef Arduino_h
 
+#include <Arduino.h>
+
+#endif
 class LinuxSystem : public System {
+private:
+    uint32_t heartbeat_period = 10000;
+    uint32_t heartbeat_current=0;
+    uint32_t elapsed_current=0;
 public:
     void set_heartbeat(uint32_t period) override;
 
