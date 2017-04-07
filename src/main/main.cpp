@@ -2,20 +2,20 @@
 #include <LinuxLogger.h>
 #include <LinuxSystem.h>
 #include <LinuxPersistent.h>
-#include <MqttBrokerImplementation.h>
 #include <Gateway.h>
+#include <paho/PahoMqttMessageHandler.h>
 
 
 Gateway gateway;
 LinuxUdpSocket udpSocket;
 LinuxPersistent persistent;
 
-MqttBrokerImplementation mqtt;
+PahoMqttMessageHandler mqtt;
 LinuxLogger logger;
 LinuxSystem systemImpl;
 
 void setup() {
-    logger.start_log("Example MQTT-SN Gateway version 0.0.1a starting", 1);
+    logger.start_log("Linux MQTT-SN Gateway version 0.0.1a starting", 1);
 
     gateway.setLoggerInterface(&logger);
     gateway.setSocketInterface(&udpSocket);
