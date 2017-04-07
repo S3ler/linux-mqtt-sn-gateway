@@ -1,3 +1,6 @@
 [submodule "src/core-mqtt-sn-gateway"]
 	path = src/core-mqtt-sn-gateway
 	url = git@github.com:S3ler/core-mqtt-sn-gateway.git
+[submodule "src/arduino-linux-abstraction"]
+	path = src/arduino-linux-abstraction
+	url = git@github.com:S3ler/arduino-linux-abstraction.git
