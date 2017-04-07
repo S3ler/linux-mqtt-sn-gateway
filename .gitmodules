@@ -1,0 +1,3 @@
+[submodule "src/core-mqtt-sn-gateway"]
+	path = src/core-mqtt-sn-gateway
+	url = git@github.com:S3ler/core-mqtt-sn-gateway.git
