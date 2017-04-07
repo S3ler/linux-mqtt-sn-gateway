@@ -65,4 +65,4 @@ finally init/update submodules
 done.
 
 ## Implementation notes
-
+We use two project as git submodules: [core-mqtt-sn-gateway](https://github.com/S3ler/core-mqtt-sn-gateway) and [arduino-linux-abstraction](https://github.com/S3ler/arduino-linux-abstraction).
