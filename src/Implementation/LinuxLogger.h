@@ -8,7 +8,19 @@
 
 #include <LoggerInterface.h>
 
+#ifndef Arduino_h
+
+#include <Arduino.h>
+
+#endif
+
 class LinuxLogger : public LoggerInterface {
+private:
+    uint8_t current_log_lvl = 2;
+    uint8_t last_started_log_lvl = UINT8_MAX;
+#ifndef Arduino_h
+    SerialLinux Serial;
+#endif
 
 public:
     bool begin() override;

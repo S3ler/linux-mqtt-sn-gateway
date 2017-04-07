@@ -57,12 +57,16 @@ then change into folder
 
     cd linux-mqtt-sn-gateway
 
-finally init/update submodules
+finally init/update all submodules
 
     git submodule init
     git submodule update
 
 done.
+
+Updating (after init/update) all submodules is done by:
+
+    git submodule update --recursive --remote
 
 ## Implementation notes
 We use two project as git submodules: [core-mqtt-sn-gateway](https://github.com/S3ler/core-mqtt-sn-gateway) and [arduino-linux-abstraction](https://github.com/S3ler/arduino-linux-abstraction).
