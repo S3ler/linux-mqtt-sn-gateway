@@ -1,18 +1,18 @@
-#include <SocketImplementation.h>
-#include <LoggerImplementation.h>
-#include <SystemImplementation.h>
-#include <PersistentImplementation.h>
+#include <LinuxUdpSocket.h>
+#include <LinuxLogger.h>
+#include <LinuxSystem.h>
+#include <LinuxPersistent.h>
 #include <MqttBrokerImplementation.h>
 #include <Gateway.h>
 
 
 Gateway gateway;
-SocketImplementation udpSocket;
-PersistentImplementation persistent;
+LinuxUdpSocket udpSocket;
+LinuxPersistent persistent;
 
 MqttBrokerImplementation mqtt;
-LoggerImplementation logger;
-SystemImplementation systemImpl;
+LinuxLogger logger;
+LinuxSystem systemImpl;
 
 void setup() {
     logger.start_log("Example MQTT-SN Gateway version 0.0.1a starting", 1);

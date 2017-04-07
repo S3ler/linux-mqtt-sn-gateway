@@ -8,7 +8,7 @@
 
 #include <SocketInterface.h>
 
-class SocketImplementation : public SocketInterface {
+class LinuxUdpSocket : public SocketInterface {
 
 public:
     bool begin() override;

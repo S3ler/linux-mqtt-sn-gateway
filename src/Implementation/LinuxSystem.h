@@ -8,7 +8,7 @@
 
 #include <System.h>
 
-class SystemImplementation : public System {
+class LinuxSystem : public System {
 public:
     void set_heartbeat(uint32_t period) override;
 

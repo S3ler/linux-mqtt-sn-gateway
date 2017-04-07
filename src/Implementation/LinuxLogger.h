@@ -8,7 +8,7 @@
 
 #include <LoggerInterface.h>
 
-class LoggerImplementation : public LoggerInterface {
+class LinuxLogger : public LoggerInterface {
 
 public:
     bool begin() override;

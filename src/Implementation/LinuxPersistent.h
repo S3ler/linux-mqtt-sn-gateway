@@ -8,7 +8,7 @@
 
 #include <PersistentInterface.h>
 
-class PersistentImplementation : public PersistentInterface {
+class LinuxPersistent : public PersistentInterface {
 public:
     bool begin() override;
 
