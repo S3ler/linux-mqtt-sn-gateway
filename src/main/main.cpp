@@ -4,6 +4,7 @@
 #include <LinuxPersistent.h>
 #include <Gateway.h>
 #include <paho/PahoMqttMessageHandler.h>
+#include <libgen.h>
 
 
 Gateway gateway;
@@ -32,6 +33,7 @@ void setup() {
 }
 
 int main(int argc, char* argv[]) {
+    persistent.setRootPath(dirname(argv[0]));
     setup();
     while(true){
         gateway.loop();

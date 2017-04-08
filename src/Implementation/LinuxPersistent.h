@@ -104,6 +104,14 @@ private:
     const char *predefined_topic = "TOPICS.PRE";
     const char *mqtt_configuration = "MQTT.CON";
 
+public:
+
+#ifndef Arduino_h
+    void setRootPath(char* rootPath){
+        SD.setRootPath(rootPath);
+    }
+#endif
+
 private:
     size_t readCharUntil(char terminator, char *buffer, size_t buffer_size) {
         if (buffer_size < 1) return 0;
@@ -144,11 +152,7 @@ private:
         return atoi(_entry_client->file_number);
     }
 
-#ifndef Arduino_h
-    void setRootPath(char* rootPath){
-        SD.setRootPath(rootPath);
-    }
-#endif
+
 
     uint32_t find_empty_entry_space_in_registry() {
         _open_file.flush();
