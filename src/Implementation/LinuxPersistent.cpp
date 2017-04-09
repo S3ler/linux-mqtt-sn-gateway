@@ -526,7 +526,7 @@ bool LinuxPersistent::has_client_will() {
     entry_will _entry_will;
     memset(&_entry_will, 0, sizeof(entry_will));
     int readChar = _open_file.read(&_entry_will, sizeof(entry_will));
-    return (readChar < sizeof(_entry_will)) || (_entry_will.willtopic[0] == 0);
+    return (readChar == sizeof(_entry_will)) & (_entry_will.willtopic[0] != 0);
 }
 
 void LinuxPersistent::get_client_will(char *target_willtopic, uint8_t *target_willmsg,
