@@ -9,13 +9,13 @@
 bool LinuxPersistent::begin() {
     if (core == nullptr) {
 #if PERSISTENT_DEBUG
-        logger->log("Error starting SDPersistentImpl: core is null ", 1);
+        logger->log("Error starting PersistentImpl: core is null ", 1);
 #endif
         return false;
     }
     if (logger == nullptr) {
 #if PERSISTENT_DEBUG
-        logger->log("Error starting SDPersistentImpl: logger is null ", 1);
+        logger->log("Error starting PersistentImpl: logger is null ", 1);
 #endif
         return false;
     }
@@ -33,11 +33,12 @@ bool LinuxPersistent::begin() {
 
     _transaction_started = false;
     _not_in_client_registry = false;
+    SD.remove(mqtt_sub);
 
     create_file(client_registry);
     create_file(mqtt_sub);
 #if PERSISTENT_DEBUG
-    logger->log("SDPersistent ready", 1);
+    logger->log("Persistent ready", 1);
 #endif
     return true;
 }
