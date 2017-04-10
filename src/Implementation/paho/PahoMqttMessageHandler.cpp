@@ -1,5 +1,7 @@
 #include "PahoMqttMessageHandler.h"
 
+#define MQTT_LOG 1
+
 void messageArrived(MQTT::MessageData& md);
 
 MqttMessageHandlerInterface *__mqttMessageHandler = nullptr;
@@ -238,6 +240,9 @@ bool PahoMqttMessageHandler::loop() {
         // core->notify_mqtt_disconnected();
         if(getConfigAndConnect()){
             core->notify_mqtt_connected();
+#if MQTT_LOG
+            logger->log("MQTT connected", 1);
+#endif
             return true;
         }
         return false;
