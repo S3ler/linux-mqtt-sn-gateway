@@ -6,8 +6,24 @@
 #define LINUX_MQTT_SN_GATEWAY_LINUXGATEWAY_H
 
 
-class LinuxGateway {
+#include <Gateway.h>
+#include <paho/PahoMqttMessageHandler.h>
+#include "LinuxUdpSocket.h"
+#include "LinuxPersistent.h"
+#include "LinuxLogger.h"
+#include "LinuxSystem.h"
 
+class LinuxGateway : public Gateway{
+    LinuxUdpSocket udpSocket;
+    LinuxPersistent persistent;
+
+    PahoMqttMessageHandler mqtt;
+    LinuxLogger logger;
+    LinuxSystem systemImpl;
+
+public:
+    bool begin();
+    void setRootPath( char* rootPath);
 };
 
 

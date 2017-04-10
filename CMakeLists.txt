@@ -23,7 +23,7 @@ set(IMPLEMENTATIONL_FILES
         src/Implementation/LinuxLogger.h
         src/Implementation/LinuxPersistent.cpp
         src/Implementation/LinuxPersistent.h
-        )
+        src/Implementation/LinuxGateway.cpp src/Implementation/LinuxGateway.h)
 
 set(MAIN_FILE
         src/main/main.cpp)

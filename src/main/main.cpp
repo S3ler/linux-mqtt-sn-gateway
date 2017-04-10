@@ -1,41 +1,24 @@
 #include <LinuxUdpSocket.h>
 #include <LinuxLogger.h>
-#include <LinuxSystem.h>
 #include <LinuxPersistent.h>
 #include <Gateway.h>
-#include <paho/PahoMqttMessageHandler.h>
 #include <libgen.h>
+#include <LinuxGateway.h>
 
-
-Gateway gateway;
-LinuxUdpSocket udpSocket;
-LinuxPersistent persistent;
-
-PahoMqttMessageHandler mqtt;
-LinuxLogger logger;
-LinuxSystem systemImpl;
+LinuxGateway gateway;
 
 void setup() {
-    logger.start_log("Linux MQTT-SN Gateway version 0.0.1a starting", 1);
-
-    gateway.setLoggerInterface(&logger);
-    gateway.setSocketInterface(&udpSocket);
-    gateway.setMqttInterface(&mqtt);
-    gateway.setPersistentInterface(&persistent);
-    gateway.setSystemInterface(&systemImpl);
-
     while (!gateway.begin()) {
-        logger.log("Error starting gateway components", 0);
-        systemImpl.sleep(5000);
-        systemImpl.exit();
+        std::cout << "Error starting gateway components" << std::endl;
+        exit(1);
     }
-    logger.log("Gateway ready", 1);
+    std::cout << "Gateway ready" << std::endl;
 }
 
-int main(int argc, char* argv[]) {
-    persistent.setRootPath(dirname(argv[0]));
+int main(int argc, char *argv[]) {
+    gateway.setRootPath(dirname(argv[0]));
     setup();
-    while(true){
+    while (true) {
         gateway.loop();
     }
 }
