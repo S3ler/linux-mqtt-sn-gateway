@@ -14,6 +14,9 @@
  *    Ian Craggs - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
+#ifndef GATEWAY_PAHOMQTTCLIENTLINUX_H
+#define GATEWAY_PAHOMQTTCLIENTLINUX_H
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/param.h>
@@ -246,3 +249,4 @@ private:
 	struct timeval end_time;
 };
 
+#endif // GATEWAY_PAHOMQTTCLIENTLINUX_H
