@@ -23,7 +23,8 @@ set(IMPLEMENTATIONL_FILES
         src/Implementation/LinuxLogger.h
         src/Implementation/LinuxPersistent.cpp
         src/Implementation/LinuxPersistent.h
-        src/Implementation/LinuxGateway.cpp src/Implementation/LinuxGateway.h)
+        src/Implementation/LinuxGateway.cpp
+        src/Implementation/LinuxGateway.h)
 
 set(MAIN_FILE
         src/main/main.cpp)
@@ -36,7 +37,7 @@ add_subdirectory(src/core-mqtt-sn-gateway)
 add_subdirectory(src/arduino-linux-abstraction)
 add_subdirectory(src/Implementation/paho)
 
-target_link_libraries(linux-mqtt-sn-gateway core-mqtt-sn-gateway arduino-linux-abstraction PahoLinuxMqttMessageHandler)
+target_link_libraries(linux-mqtt-sn-gateway pthread core-mqtt-sn-gateway arduino-linux-abstraction PahoLinuxMqttMessageHandler)
 
 add_library(lib-linux-mqtt-sn-gateway  ${IMPLEMENTATIONL_FILES} )
 target_link_libraries(lib-linux-mqtt-sn-gateway core-mqtt-sn-gateway arduino-linux-abstraction PahoLinuxMqttMessageHandler)

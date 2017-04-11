@@ -5,7 +5,7 @@
 #ifndef LINUX_MQTT_SN_GATEWAY_LINUXGATEWAY_H
 #define LINUX_MQTT_SN_GATEWAY_LINUXGATEWAY_H
 
-
+#include <thread>
 #include <Gateway.h>
 #include <paho/PahoMqttMessageHandler.h>
 #include "LinuxUdpSocket.h"
@@ -21,9 +21,19 @@ class LinuxGateway : public Gateway{
     LinuxLogger logger;
     LinuxSystem systemImpl;
 
+    std::thread thread;
+    bool stopped = false;
+
 public:
     bool begin();
     void setRootPath( char* rootPath);
+
+    void start_loop();
+    void dispatch_loop();
+    void stop_loop();
+
+
+
 };
 
 

@@ -1,7 +1,3 @@
-#include <LinuxUdpSocket.h>
-#include <LinuxLogger.h>
-#include <LinuxPersistent.h>
-#include <Gateway.h>
 #include <libgen.h>
 #include <LinuxGateway.h>
 
@@ -18,8 +14,10 @@ void setup() {
 int main(int argc, char *argv[]) {
     gateway.setRootPath(dirname(argv[0]));
     setup();
-    while (true) {
-        gateway.loop();
+    gateway.start_loop();
+
+    while(true) {
+        // we need to keep the program alive
     }
 }
 
