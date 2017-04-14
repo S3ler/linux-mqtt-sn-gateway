@@ -8,6 +8,7 @@
 #include <thread>
 #include <Gateway.h>
 #include <paho/PahoMqttMessageHandler.h>
+#include <atomic>
 #include "LinuxUdpSocket.h"
 #include "LinuxPersistent.h"
 #include "LinuxLogger.h"
@@ -22,7 +23,7 @@ class LinuxGateway : public Gateway{
     LinuxSystem systemImpl;
 
     std::thread thread;
-    bool stopped = false;
+    std::atomic<bool> stopped{false};
 
 public:
     bool begin();
