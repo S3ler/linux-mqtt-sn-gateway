@@ -14,6 +14,11 @@ bool LinuxUdpSocket::begin() {
         return false;
     }
 
+    int enable = 1;
+    if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) == -1) {
+        return false;
+    }
+
     // zero out the structure
     memset((char *) &si_me, 0, sizeof(si_me));
 
@@ -23,11 +28,6 @@ bool LinuxUdpSocket::begin() {
 
     //bind socket to port
     if (bind(s, (struct sockaddr *) &si_me, sizeof(si_me)) == -1) {
-        return false;
-    }
-
-    int enable = 1;
-    if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) == -1) {
         return false;
     }
 
