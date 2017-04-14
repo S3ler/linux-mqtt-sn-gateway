@@ -26,7 +26,10 @@ bool LinuxUdpSocket::begin() {
         return false;
     }
 
-
+    int enable = 1;
+    if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) == -1) {
+        return false;
+    }
 
     // set timout
     struct timeval tv;
