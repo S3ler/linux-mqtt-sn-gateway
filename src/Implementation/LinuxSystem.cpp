@@ -4,6 +4,12 @@
 
 #include "LinuxSystem.h"
 
+#ifndef Arduino_h
+LinuxSystem::LinuxSystem() {
+    resetTimerValue();
+}
+#endif
+
 void LinuxSystem::set_heartbeat(uint32_t period) {
     this->heartbeat_period = period;
 }
