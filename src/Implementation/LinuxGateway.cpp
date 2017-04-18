@@ -23,7 +23,6 @@ void LinuxGateway::setRootPath( char *rootPath) {
 
 void LinuxGateway::start_loop() {
     this->thread = std::thread(&LinuxGateway::dispatch_loop, this);
-    this->thread.detach();
 }
 
 void LinuxGateway::stop_loop() {
