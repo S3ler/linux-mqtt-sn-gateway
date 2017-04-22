@@ -103,6 +103,8 @@ private:
     const char *mqtt_sub = "MQTT.SUB";
     const char *predefined_topic = "TOPICS.PRE";
     const char *mqtt_configuration = "MQTT.CON";
+    const char *mqttsn_configuration = "MQTTSN.CON";
+
 
 public:
 
@@ -280,6 +282,8 @@ public:
     void remove_publish_by_publish_id(uint16_t publish_id) override;
 
     uint16_t get_advertise_duration() override;
+
+    uint16_t get_timeout_check_duration() override;
 
     bool get_gateway_id(uint8_t *gateway_id) override;
 

@@ -5,4 +5,3 @@ willtopic /mqtt/sn/gateway
 willmessage /mqtt-sn linux gateway offline
 willqos 1
 willretain 0
-gatewayid 2
