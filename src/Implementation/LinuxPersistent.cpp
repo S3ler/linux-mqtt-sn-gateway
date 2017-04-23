@@ -1864,9 +1864,8 @@ uint16_t LinuxPersistent::get_advertise_duration() {
     }
 
 #if PERSISTENT_DEBUG
-    logger->log("advertise duration loaded:", 2);
     if (!has_b_advertise_duration) {
-        logger->append_log(" missing - returning default value");
+        logger->log("advertise duration missing - using default value", 2);
         advertise_duration = 900;
     }
 #endif
@@ -1878,7 +1877,7 @@ uint16_t LinuxPersistent::get_timeout_check_duration() {
     uint16_t timeout_duration = 0;
 
 #if PERSISTENT_DEBUG
-    logger->log("loading gateway id", 2);
+    logger->log("loading timeout check duration", 2);
 #endif
     //_open_file.close();
     _open_file = SD.open(mqttsn_configuration);
@@ -1897,9 +1896,8 @@ uint16_t LinuxPersistent::get_timeout_check_duration() {
     }
 
 #if PERSISTENT_DEBUG
-    logger->log("gateway id loaded:", 2);
     if (!has_b_timeout_duration) {
-        logger->append_log(" missing - returning default value");
+        logger->log("time check duration missing - using default value", 2);
         timeout_duration = 10;
     }
 #endif
@@ -1928,10 +1926,9 @@ bool LinuxPersistent::get_gateway_id(uint8_t *gateway_id) {
         memset(&buffer, 0, sizeof(buffer));
     }
 #if PERSISTENT_DEBUG
-    logger->log("gateway id loaded:", 2);
     if (!has_b_gw_id) {
+        logger->log("gateway id missing", 2);
         *gateway_id = 0;
-        logger->append_log(" missing");
     }
 #endif
     return true;

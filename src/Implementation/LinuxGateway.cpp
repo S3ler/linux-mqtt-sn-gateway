@@ -13,6 +13,7 @@ bool LinuxGateway::begin() {
     Gateway::setMqttInterface(&mqtt);
     Gateway::setPersistentInterface(&persistent);
     Gateway::setSystemInterface(&systemImpl);
+    Gateway::setDurationSystemInterface(&durationSystemImpl);
 
     return Gateway::begin();
 }

@@ -23,11 +23,14 @@
 class LinuxUdpSocket : public SocketInterface {
 public:
 
-    struct sockaddr_in si_me, si_other;
+    struct sockaddr_in udp_socket_address, si_other;
 
-    int s, i, recv_len;
+    int udp_socket, i, recv_len;
     socklen_t slen = sizeof(si_other);
     char buf[BUFLEN];
+
+    int socket_descriptor;
+
 
     MqttSnMessageHandler *mqttsn = nullptr;
     device_address own_address;
@@ -36,6 +39,10 @@ public:
     LoggerInterface *logger;
 public:
     bool begin() override;
+
+    bool initUdpSocket();
+
+    bool initMulticastUdpSocket();
 
     void setLogger(LoggerInterface *logger) override;
 

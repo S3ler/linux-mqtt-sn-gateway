@@ -21,6 +21,7 @@ class LinuxGateway : public Gateway{
     PahoMqttMessageHandler mqtt;
     LinuxLogger logger;
     LinuxSystem systemImpl;
+    LinuxSystem durationSystemImpl;
 
     std::thread thread;
     std::atomic<bool> stopped{false};

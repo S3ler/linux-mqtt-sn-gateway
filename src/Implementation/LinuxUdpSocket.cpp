@@ -8,48 +8,149 @@ bool LinuxUdpSocket::begin() {
     if (mqttsn == nullptr) {
         return false;
     }
-
-    //create a UDP socket
-    if ((s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
+    if (!initUdpSocket()) {
         return false;
     }
 
-    int enable = 1;
-    if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) == -1) {
+    if (!initMulticastUdpSocket()) {
         return false;
     }
 
-    // zero out the structure
-    memset((char *) &si_me, 0, sizeof(si_me));
+    if (udp_socket >= 0 && socket_descriptor >= 0) {
+        mqttsn->notify_socket_connected();
+    }
 
-    si_me.sin_family = AF_INET;
-    si_me.sin_port = htons(PORT);
-    si_me.sin_addr.s_addr = htonl(INADDR_ANY);
+    return udp_socket >= 0;
+}
 
-    //bind socket to port
-    if (bind(s, (struct sockaddr *) &si_me, sizeof(si_me)) == -1) {
+bool LinuxUdpSocket::initMulticastUdpSocket() {
+    static int port = 1234;
+
+    static struct ip_mreq command;
+    int loop = 1;
+    struct sockaddr_in sin;
+    memset(&sin, 0, sizeof(sin));
+    sin.sin_family = AF_INET;
+    sin.sin_addr.s_addr = htonl(INADDR_ANY);
+    sin.sin_port = htons(port);
+    if ((socket_descriptor = socket(PF_INET,
+                                    SOCK_DGRAM, 0)) == -1) {
+        perror("socket()");
+        return false;
+        //exit(EXIT_FAILURE);
+    }
+    /* Mehr Prozessen erlauben, denselben Port zu nutzen */
+    loop = 1;
+    if (setsockopt(socket_descriptor,
+                   SOL_SOCKET,
+                   SO_REUSEADDR,
+                   &loop, sizeof(loop)) < 0) {
+        perror("setsockopt:SO_REUSEADDR");
+        exit(EXIT_FAILURE);
+    }
+    if (bind(socket_descriptor,
+             (struct sockaddr *) &sin,
+             sizeof(sin)) < 0) {
+        perror("bind");
+        return false;
+        //exit(EXIT_FAILURE);
+
+    }
+    /* Broadcast auf dieser Maschine zulassen */
+    loop = 1;
+    if (setsockopt(socket_descriptor,
+                   IPPROTO_IP,
+                   IP_MULTICAST_LOOP,
+                   &loop, sizeof(loop)) < 0) {
+        perror("setsockopt:IP_MULTICAST_LOOP");
+        return false;
+        //exit(EXIT_FAILURE);
+    }
+
+
+    /* Join the broadcast group: */
+    command.imr_multiaddr.s_addr = inet_addr("224.0.0.0");
+    command.imr_interface.s_addr = htonl(INADDR_ANY);
+    if (command.imr_multiaddr.s_addr == -1) {
+        perror("224.0.0.0 ist keine Multicast-Adresse\n");
+        return false;
+        //exit(EXIT_FAILURE);
+    }
+    if (setsockopt(socket_descriptor,
+                   IPPROTO_IP,
+                   IP_ADD_MEMBERSHIP,
+                   &command, sizeof(command)) < 0) {
+        perror("setsockopt:IP_ADD_MEMBERSHIP");
         return false;
     }
 
     // set timout
-    struct timeval tv;
-    tv.tv_sec = 0;  // 0 Secs Timeout
-    tv.tv_usec = 300000;  // 300 ms Timeout
+    struct timeval udp_socket_timeval;
+    udp_socket_timeval.tv_sec = 0;  // 0 Secs Timeout
+    udp_socket_timeval.tv_usec = 200000;  // 200 ms Timeout
 
 
-    if (setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *) &tv, sizeof(struct timeval)) == -1) {
+    if (setsockopt(socket_descriptor, SOL_SOCKET, SO_RCVTIMEO, (char *) &udp_socket_timeval, sizeof(struct timeval)) == -1) {
+        return false;
+    }
+
+    // save bc address as value now
+    struct sockaddr_in address;
+    memset (&address, 0, sizeof (address));
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = inet_addr ("224.0.0.0");
+    address.sin_port = htons (port);
+
+    device_address bc_address = this->getDevice_address(&address);
+    memset(&broadcast_address, 0, sizeof(device_address));
+    memcpy(this->broadcast_address.bytes, bc_address.bytes, sizeof(device_address));
+
+    return true;
+
+}
+
+bool LinuxUdpSocket::initUdpSocket() {
+
+    //create a UDP socket
+    if ((udp_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
+        return false;
+    }
+
+    int resuse_addr = 1;
+    if (setsockopt(udp_socket, SOL_SOCKET, SO_REUSEADDR, &resuse_addr, sizeof(resuse_addr)) == -1) {
+        return false;
+    }
+
+    // zero out the structure
+    memset((char *) &udp_socket_address, 0, sizeof(udp_socket_address));
+
+    udp_socket_address.sin_family = AF_INET;
+    udp_socket_address.sin_addr.s_addr = htonl(INADDR_ANY);
+    udp_socket_address.sin_port = htons(PORT);
+
+    //bind socket to port
+    if (bind(udp_socket, (struct sockaddr *) &udp_socket_address, sizeof(udp_socket_address)) == -1) {
+        return false;
+    }
+
+    // set timout
+    struct timeval udp_socket_timeval;
+    udp_socket_timeval.tv_sec = 0;  // 0 Secs Timeout
+    udp_socket_timeval.tv_usec = 200000;  // 200 ms Timeout
+
+
+    if (setsockopt(udp_socket, SOL_SOCKET, SO_RCVTIMEO, (char *) &udp_socket_timeval, sizeof(struct timeval)) == -1) {
         return false;
     }
 
     // enable broadcast
-    int broadcastEnable = 1;
-    if (setsockopt(s, SOL_SOCKET, SO_BROADCAST, &broadcastEnable, sizeof(broadcastEnable)) == -1) {
+    int udp_socket_broadcast_enable = 1;
+    if (setsockopt(udp_socket, SOL_SOCKET, SO_BROADCAST, &udp_socket_broadcast_enable,
+                   sizeof(udp_socket_broadcast_enable)) == -1) {
         return false;
     }
-    if (s >= 0) {
-        mqttsn->notify_socket_connected();
-    }
-    return s >= 0;
+
+    return true;
 }
 
 void LinuxUdpSocket::setLogger(LoggerInterface *logger) {
@@ -61,21 +162,20 @@ void LinuxUdpSocket::setMqttSnMessageHandler(MqttSnMessageHandler *mqttSnMessage
 }
 
 device_address *LinuxUdpSocket::getBroadcastAddress() {
-    memset(&broadcast_address, 0, sizeof(device_address));
-    if (s < 0) {
-        return &broadcast_address;
+    if (udp_socket < 0) {
+        memset(&broadcast_address, 0, sizeof(device_address));
     }
-    uint32_t broadcast_ip_address = INADDR_BROADCAST;
-    uint16_t broadcast_port = PORT;
-    memcpy(&broadcast_address.bytes, &broadcast_ip_address, sizeof(broadcast_ip_address));
-    memcpy(&broadcast_address.bytes[sizeof(broadcast_ip_address)], &broadcast_port, sizeof(broadcast_port));
+    //uint32_t broadcast_ip_address = INADDR_BROADCAST;
+    //uint16_t broadcast_port = PORT;
+    //memcpy(&broadcast_address.bytes, &broadcast_ip_address, sizeof(broadcast_ip_address));
+    //memcpy(&broadcast_address.bytes[sizeof(broadcast_ip_address)], &broadcast_port, sizeof(broadcast_port));
     return &broadcast_address;
 }
 
 device_address *LinuxUdpSocket::getAddress() {
     // http://www.geekpage.jp/en/programming/linux-network/get-ipaddr.php
     memset(&own_address, 0, sizeof(device_address));
-    if (s < 0) {
+    if (udp_socket < 0) {
         return &own_address;
     }
     struct ifreq ifr;
@@ -85,7 +185,7 @@ device_address *LinuxUdpSocket::getAddress() {
     /* I want IP address attached to "eth0" */
     strncpy(ifr.ifr_name, "eth0", IFNAMSIZ - 1);
 
-    ioctl(s, SIOCGIFADDR, &ifr);
+    ioctl(udp_socket, SIOCGIFADDR, &ifr);
 
     /* display result */
     // printf("%s\n", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
@@ -162,12 +262,25 @@ uint8_t LinuxUdpSocket::getMaximumMessageLength() {
 }
 
 bool LinuxUdpSocket::send(device_address *destination, uint8_t *bytes, uint16_t bytes_len) {
+    if (destination == &this->broadcast_address) {
+
+        struct sockaddr_in address;
+        memset (&address, 0, sizeof (address));
+        address.sin_family = AF_INET;
+        address.sin_addr.s_addr = inet_addr ("224.0.0.0");
+        int port = 1234;
+        address.sin_port = htons (port);
+        if (sendto( socket_descriptor,  bytes, bytes_len,  0, (struct sockaddr *) &address, sizeof (address)) < 0) {
+            // we ignore it
+        }
+        return socket_descriptor >= 0;
+    }
     si_other.sin_addr.s_addr = getIp_address(destination);
     si_other.sin_port = getPort(destination);
-    if (sendto(s, bytes, bytes_len, 0, (struct sockaddr *) &si_other, slen) == -1) {
+    if (sendto(udp_socket, bytes, bytes_len, 0, (struct sockaddr *) &si_other, slen) == -1) {
         // we ignore it
     }
-    return s >= 0;
+    return udp_socket >= 0;
 }
 
 bool LinuxUdpSocket::send(device_address *destination, uint8_t *bytes, uint16_t bytes_len, uint8_t signal_strength) {
@@ -175,7 +288,7 @@ bool LinuxUdpSocket::send(device_address *destination, uint8_t *bytes, uint16_t 
 }
 
 bool LinuxUdpSocket::loop() {
-    if (s < 0) {
+    if (udp_socket < 0) {
         // socket disconnected
         mqttsn->notify_socket_disconnected();
         if (this->begin()) {
@@ -187,18 +300,26 @@ bool LinuxUdpSocket::loop() {
     //listening for data for 300 ms
     //printf("Waiting for data...");
     memset(&buf, 0, BUFLEN);
-    if ((recv_len = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen)) != -1) {
+    if ((recv_len = recvfrom(udp_socket, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen)) != -1) {
         // print details of the client/peer and the data received
         // printf("Received packet from %s:%d\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
         // printf("Data: %s\n" , buf);
         if (recv_len <= UINT8_MAX) {
-
-
             device_address client_address = getDevice_address(&si_other);
             mqttsn->receiveData(&client_address, (uint8_t *) &buf);
         }
     }
-    return s >= 0;
+    memset(&buf, 0, BUFLEN);
+    if ((recv_len = recvfrom(socket_descriptor, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen)) != -1) {
+        // print details of the client/peer and the data received
+        // printf("Received packet from %s:%d\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
+        // printf("Data: %s\n" , buf);
+        if (recv_len <= UINT8_MAX) {
+            device_address client_address = getDevice_address(&si_other);
+            mqttsn->receiveData(&client_address, (uint8_t *) &buf);
+        }
+    }
+    return udp_socket >= 0;
 }
 
 device_address LinuxUdpSocket::getDevice_address(sockaddr_in *addr) const {
