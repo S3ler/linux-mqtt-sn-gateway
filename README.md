@@ -1,7 +1,15 @@
 # linux-mqtt-sn-gateway
 MQTT-SN gateway for linux based operating systems.
 
-Note about the current status of this project: It is completely work in progress and only partly tested. It runs only on Linux system but it is written against the Arduino Framework by using Linux based fake implementations for Arduino functions and libraris. It runs (successfully) on a NodeMCU with Arduino Core and a SPI SD-Card reader.
+Note about the current status of this project: It is completely work in progress and only partly tested.
+
+Untested or not implemented:
+1. Sleeping Clients
+2. Wildcard subscription (inlcuding registrations messages from gateway to client)
+3. Will update
+4. Retransmission
+
+It runs only on Linux system but it is written against the Arduino Framework by using Linux based fake implementations for Arduino functions and libraris. It runs (successfully) on a NodeMCU with Arduino Core and a SPI SD-Card reader.
 This implementation is a aggregating gateway for MQTT-SN. The aim of MQTT-SN is to support Wireless Sensor Networks (WSNs) with very large numbers of battery-operated sensors and actuators (SAs). This gateway is designed with platform independence in mind. Other MQTT-SN gateway implementation at least need a operating system (or only bridge messages). To fulfill the requierement the implementation shall use little RAM, no dynamic memory allocation, platform and hardware portability by interfaces. Further it does not rely on any physical layer, media access control (e.g IEEE 802.15.4), network layer (e.g. 6LoWPAN) or transport layer (e.g. UDP/TCP) standard or implementation.
 
 ## Getting started - running
