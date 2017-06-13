@@ -140,6 +140,7 @@ bool PerpheralConnection::connect(char *mac) {
 
 void PerpheralConnection::start_loop() {
     this->thread = std::thread(&PerpheralConnection::loop, this);
+    bleSocket->addPeripheralConnection(this);
     // this->thread.detach();
 }
 
@@ -147,7 +148,6 @@ void PerpheralConnection::loop() {
     if(!this->connect(advertise->getMAC())){
         return;
     }
-    bleSocket->addPeripheralConnection(this);
     creater->removeFromBlacklist(advertise);
     while(!stopped){
         std::this_thread::sleep_for(5s);
