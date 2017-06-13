@@ -15,8 +15,8 @@ include_directories(src/Implementation)
 include_directories(src/main)
 
 set(IMPLEMENTATIONL_FILES
-        src/Implementation/LinuxUdpSocket.cpp
-        src/Implementation/LinuxUdpSocket.h
+        src/Implementation/Udp/LinuxUdpSocket.cpp
+        src/Implementation/Udp/LinuxUdpSocket.h
         src/Implementation/LinuxSystem.cpp
         src/Implementation/LinuxSystem.h
         src/Implementation/LinuxLogger.cpp
