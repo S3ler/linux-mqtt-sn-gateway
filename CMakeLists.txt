@@ -36,6 +36,7 @@ add_executable(linux-mqtt-sn-gateway ${IMPLEMENTATIONL_FILES} ${MAIN_FILE})
 add_subdirectory(src/core-mqtt-sn-gateway)
 add_subdirectory(src/arduino-linux-abstraction)
 add_subdirectory(src/Implementation/paho)
+add_subdirectory(src/Implementation/BluetoothLowEnergy)
 
 target_link_libraries(linux-mqtt-sn-gateway pthread core-mqtt-sn-gateway arduino-linux-abstraction PahoLinuxMqttMessageHandler)
 
