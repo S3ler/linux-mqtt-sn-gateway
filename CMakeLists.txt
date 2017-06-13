@@ -37,6 +37,7 @@ add_subdirectory(src/core-mqtt-sn-gateway)
 add_subdirectory(src/arduino-linux-abstraction)
 add_subdirectory(src/Implementation/paho)
 add_subdirectory(src/Implementation/BluetoothLowEnergy)
+add_subdirectory(src/Implementation/Tcp)
 
 target_link_libraries(linux-mqtt-sn-gateway pthread core-mqtt-sn-gateway arduino-linux-abstraction PahoLinuxMqttMessageHandler)
 
