@@ -21,7 +21,9 @@ BluetoothLowEnergyAdvertise::BluetoothLowEnergyAdvertise(const char *mac, const 
     memset(this->name, 0, sizeof(this->name));
 
     strcpy(this->mac, mac);
-    strcpy(this->name, name);
+    if (name != NULL) {
+        strcpy(this->name, name);
+    }
     this->timestamp = timestamp;
 }
 

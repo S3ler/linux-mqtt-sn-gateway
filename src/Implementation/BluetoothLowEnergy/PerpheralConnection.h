@@ -47,6 +47,8 @@ public:
     void receiveData(const uint8_t *data, size_t data_length);
 
     ~PerpheralConnection();
+
+    volatile bool error = false;
 };
 
 

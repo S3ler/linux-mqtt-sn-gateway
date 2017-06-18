@@ -3,11 +3,11 @@
 //
 
 #include <thread>
-#include <BluetoothLowEnergy/gattlib/bluez/gattlib_internal.h>
 #include "PerpheralConnection.h"
 
 #define MIN(a, b)    ((a)<(b)?(a):(b))
 
+#define NUS_SERVICE_USED              1
 #define NUS_CHARACTERISTIC_TX_UUID    "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
 #define NUS_CHARACTERISTIC_RX_UUID    "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
 #define NUS_CHARACTERISTIC_RX_CCCD    "2902"
@@ -16,14 +16,21 @@ void notification_cb(const uuid_t *uuid, const uint8_t *data, size_t data_length
     PerpheralConnection *connection = static_cast<PerpheralConnection *>(user_data);
     uuid_t nus_characteristic_rx_uuid;
     int ret = gattlib_string_to_uuid(NUS_CHARACTERISTIC_RX_UUID, strlen(NUS_CHARACTERISTIC_RX_UUID) + 1,
-                                 &nus_characteristic_rx_uuid);
+                                     &nus_characteristic_rx_uuid);
     if (ret) {
         fprintf(stderr, "Fail to convert characteristic RX_HANDLE to UUID.\n");
+        connection->error = true;
         // TODO disconnect myself from gateway
     }
     if (gattlib_uuid_cmp(uuid, &nus_characteristic_rx_uuid) == 0) {
+#if(NUS_SERVICE_USED == 1)
+        // remove ’\n’ from the end
+        connection->receiveData(data, data_length - 1);
+#else
         connection->receiveData(data, data_length);
+#endif
     }
+
 }
 
 device_address *PerpheralConnection::getAddress() {
@@ -31,14 +38,16 @@ device_address *PerpheralConnection::getAddress() {
 }
 
 bool PerpheralConnection::send(uint8_t *payload, uint16_t payload_length) {
-    if (payload_length > 20) {
+    if (payload_length > BLUETOOTH_LE_MAX_MESSAGE_LENGTH) {
         return false;
     }
 
     int ret = gattlib_write_char_by_handle(m_connection, tx_handle, payload, payload_length);
     if (ret) {
         fprintf(stderr, "Fail to send data to NUS TX characteristic.\n");
-        // TODO disconnect myself from gateway
+        free(m_connection);
+        m_connection = NULL;
+        this->error = true;
         return false;
     }
     return true;
@@ -70,7 +79,8 @@ bool PerpheralConnection::connect(char *mac) {
         fprintf(stderr, "Fail to convert characteristic RX_HANDLE to UUID.\n");
         return false;
     }
-    ret = gattlib_string_to_uuid(NUS_CHARACTERISTIC_RX_CCCD, strlen(NUS_CHARACTERISTIC_RX_CCCD) + 1, &nus_characteristic_rx_cccd);
+    ret = gattlib_string_to_uuid(NUS_CHARACTERISTIC_RX_CCCD, strlen(NUS_CHARACTERISTIC_RX_CCCD) + 1,
+                                 &nus_characteristic_rx_cccd);
     if (ret) {
         fprintf(stderr, "Fail to convert characteristic RX to UUID.\n");
         return false;
@@ -145,13 +155,19 @@ void PerpheralConnection::start_loop() {
 }
 
 void PerpheralConnection::loop() {
-    if(!this->connect(advertise->getMAC())){
+    if (!this->connect(advertise->getMAC())) {
         return;
     }
     creater->removeFromBlacklist(advertise);
-    while(!stopped){
-        std::this_thread::sleep_for(5s);
+    while (!stopped) {
+        if (this->error) {
+            this->stop_loop();
+            printf("Connection Error %s - '%s'\n", advertise->getMAC(), advertise->getName());
+        }
     }
+    printf("Closing %s - '%s'\n", advertise->getMAC(), advertise->getName());
+    // TODO free stuff
+    // TODO remove from socket
 }
 
 void PerpheralConnection::stop_loop() {
@@ -167,6 +183,7 @@ void PerpheralConnection::setAdvertise(BluetoothLowEnergyAdvertise *pAdvertise) 
     device_address tmp_address = bleSocket->convertToDeviceAddress(this->advertise->getMAC());
     memcpy(&this->address, &tmp_address, sizeof(tmp_address));
 }
+
 void PerpheralConnection::setBLESocket(LinuxBluetoothLowEnergySocket *bleSocket) {
     this->bleSocket = bleSocket;
 }

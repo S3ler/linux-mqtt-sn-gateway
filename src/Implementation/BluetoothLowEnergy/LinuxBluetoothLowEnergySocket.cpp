@@ -2,7 +2,6 @@
 // Created by bele on 11.06.17.
 //
 
-#include <BluetoothLowEnergy/gattlib/include/gattlib.h>
 #include <iostream>
 #include "LinuxBluetoothLowEnergySocket.h"
 
@@ -73,10 +72,11 @@ bool LinuxBluetoothLowEnergySocket::send(device_address *destination, uint8_t *b
     std::lock_guard<std::mutex> lock_guard(connections_mutex);
     for (auto &&connection : connections) {
         if (memcmp(destination, connection->getAddress(), sizeof(device_address)) == 0) {
-            return connection->send(bytes, bytes_len);
+            bool result = connection->send(bytes, bytes_len);
+            return true;
         }
     }
-    return false;
+    return true;
 }
 
 bool LinuxBluetoothLowEnergySocket::send(device_address *destination, uint8_t *bytes, uint16_t bytes_len,
@@ -93,7 +93,15 @@ bool LinuxBluetoothLowEnergySocket::loop() {
         // mqttSnMessageHandler->receiveData(&msg->address, (uint8_t *) &msg->payload);
         //logger->log("received message", 0);
         char *mac = convertToMacString(&msg->address);
-        std::cout << mac << " | " << msg->payload << std::endl;
+        std::cout << mac << " | ";
+        for (uint8_t i = 0; i < msg->payload_length; i++) {
+            if((i+1) == msg->payload_length && msg->payload[i]=='\n'){
+                // this is ignored
+                break;
+            }
+            std::cout << msg->payload[i];
+        }
+        std::cout << std::endl;
         this->send(&msg->address, msg->payload, msg->payload_length);
         delete (msg);
     }

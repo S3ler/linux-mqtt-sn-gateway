@@ -16,7 +16,7 @@
 #include "BluetoothLowEnergyAdvertise.h"
 #include <list>
 
-#define BLUETOOTH_LE_MAX_MESSAGE_LENGTH 20
+#define BLUETOOTH_LE_MAX_MESSAGE_LENGTH 20-1 // NUS service uses '\n' as terminator
 
 class PerpheralConnection;
 class PeripherapConnectionCreator;
