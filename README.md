@@ -75,6 +75,12 @@ done.
 Updating (after init/update) all submodules is done by:
 
     git submodule update --recursive --remote
+    
+For Bluetooth development install:
+
+    apt install pkg-config
+    apt install libglib2.0-dev
+    apt install libbluetooth-dev
 
 ## Implementation notes
 We use two project as git submodules: [core-mqtt-sn-gateway](https://github.com/S3ler/core-mqtt-sn-gateway) and [arduino-linux-abstraction](https://github.com/S3ler/arduino-linux-abstraction).
