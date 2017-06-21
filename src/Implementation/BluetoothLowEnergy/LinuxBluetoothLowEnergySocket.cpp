@@ -30,13 +30,14 @@ bool LinuxBluetoothLowEnergySocket::begin() {
 
 
     this->scanner = new Scanner();
-
+    this->scanner->setAdapter(adapter);
     this->connectionCreator = new PeripherapConnectionCreator();
     this->scanner->setScannerQueue(this->connectionCreator->getQueue());
     this->connectionCreator->setBleSocket(this);
 
     this->connectionCreator->start_loop();
-    if (!this->scanner->scan_enable(adapter)) {
+
+    if (!this->scanner->scan_enable()) {
         return false;
     }
     return true;

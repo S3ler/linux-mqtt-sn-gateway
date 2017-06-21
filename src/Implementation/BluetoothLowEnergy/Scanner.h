@@ -12,36 +12,31 @@
 
 #define BLE_SCAN_TIMEOUT   10
 
+
+// TODO adapter not threadsafe
+// TODO static class member init
+
 class Scanner {
-public:
-    static Queue<BluetoothLowEnergyAdvertise *> *queue ;
+private:
+    static Queue<BluetoothLowEnergyAdvertise *> *queue;
+    void *adapter = nullptr;
 
 public:
-    void start_loop();
+    bool scan_enable();
 
-    void loop();
+    void scan_disable();
 
-    void stop_loop();
-
-    bool stopped;
-    std::thread thread;
+    void setAdapter(void *adapter);
 
     void setScannerQueue(Queue<BluetoothLowEnergyAdvertise *> *queue);
 
+    ~Scanner();
 
+private:
     bool scan_enable(void *adapter);
-
-    void *adapter;
 
     static void ble_discovered_device(const char *addr, const char *name);
 
-    ~Scanner();
 };
 
-/*
-#ifndef LINUX_MQTT_SN_GATEWAY_SCANNER_STATIC_INIT
-#define LINUX_MQTT_SN_GATEWAY_SCANNER_STATIC_INIT
-    Queue<BluetoothLowEnergyAdvertise *> *Scanner::queue = nullptr;
-#endif
-*/
 #endif //LINUX_MQTT_SN_GATEWAY_SCANNER_H
