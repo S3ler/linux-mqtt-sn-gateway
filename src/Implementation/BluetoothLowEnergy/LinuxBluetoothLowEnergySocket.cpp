@@ -119,7 +119,7 @@ char *LinuxBluetoothLowEnergySocket::convertToMacString(device_address *address)
 }
 
 
-bool LinuxBluetoothLowEnergySocket::isConnected(char *mac) {
+bool LinuxBluetoothLowEnergySocket::isConnected(const char *mac) {
     std::lock_guard<std::mutex> lock_guard(connections_mutex);
     for (auto &&connection : connections) {
         if (strcmp(connection->getMAC(), mac) == 0) {

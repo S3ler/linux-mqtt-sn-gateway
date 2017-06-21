@@ -59,7 +59,7 @@ public:
 
     bool loop() override;
 
-    bool isConnected(char *mac);
+    bool isConnected(const char *mac);
 
     void addPeripheralConnection(PerpheralConnection *connection);
 

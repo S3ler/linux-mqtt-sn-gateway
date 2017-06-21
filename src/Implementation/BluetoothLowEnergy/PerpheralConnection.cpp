@@ -53,7 +53,7 @@ bool PerpheralConnection::send(uint8_t *payload, uint16_t payload_length) {
     return true;
 }
 
-bool PerpheralConnection::connect(char *mac) {
+bool PerpheralConnection::connect(const char *mac) {
     int i, ret, total_length, length = 0;
     uuid_t nus_characteristic_tx_uuid;
     uuid_t nus_characteristic_rx_cccd;
@@ -188,7 +188,7 @@ void PerpheralConnection::setBLESocket(LinuxBluetoothLowEnergySocket *bleSocket)
     this->bleSocket = bleSocket;
 }
 
-char *PerpheralConnection::getMAC() {
+const char *PerpheralConnection::getMAC() {
     return advertise->getMAC();
 }
 

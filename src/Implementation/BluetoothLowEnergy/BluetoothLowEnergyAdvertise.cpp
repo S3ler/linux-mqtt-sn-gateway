@@ -4,23 +4,24 @@
 
 #include "BluetoothLowEnergyAdvertise.h"
 
-char *BluetoothLowEnergyAdvertise::getMAC() {
+const char *BluetoothLowEnergyAdvertise::getMAC() {
     return this->mac;
 }
 
-std::chrono::milliseconds BluetoothLowEnergyAdvertise::getTimestamp() {
+const std::chrono::milliseconds BluetoothLowEnergyAdvertise::getTimestamp() {
     return this->timestamp;
 }
+
 const char *BluetoothLowEnergyAdvertise::getName() const {
     return name;
 }
 
 BluetoothLowEnergyAdvertise::BluetoothLowEnergyAdvertise(const char *mac, const char *name,
-                                                         std::chrono::milliseconds timestamp) {
+                                                         const std::chrono::milliseconds timestamp) {
     memset(this->mac, 0, sizeof(this->mac));
     memset(this->name, 0, sizeof(this->name));
 
-    strcpy(this->mac, mac);
+    strcpy((char *) this->mac, mac);
     if (name != NULL) {
         strcpy(this->name, name);
     }

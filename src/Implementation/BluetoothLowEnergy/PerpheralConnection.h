@@ -26,12 +26,12 @@ public:
     gatt_connection_t* m_connection = NULL;
 
     bool send(uint8_t* payload, uint16_t payload_length);
-    bool connect(char *mac);
+    bool connect(const char *mac);
     void start_loop();
     void loop();
     void stop_loop();
 
-    char* getMAC();
+    const char* getMAC();
 
     void setPeripheralCreator(PeripherapConnectionCreator *pCreator);
 

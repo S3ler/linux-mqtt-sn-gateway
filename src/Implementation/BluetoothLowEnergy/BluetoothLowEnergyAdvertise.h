@@ -8,18 +8,19 @@
 #include <chrono>
 #include <cstring>
 
-#define MAC_LENGTH  6
-
 class BluetoothLowEnergyAdvertise {
+private:
+#define MAC_BYTES  6
+    char mac[MAC_BYTES * 4];
+    char name[255];
+    std::chrono::milliseconds timestamp;
 
 public:
-    BluetoothLowEnergyAdvertise(const char *mac, const char *name, std::chrono::milliseconds timestamp);
+    BluetoothLowEnergyAdvertise(const char *mac, const char *name, const std::chrono::milliseconds timestamp);
 
-    char *getMAC();
-    std::chrono::milliseconds getTimestamp();
-    char mac[19];//TODO check format!
-    std::chrono::milliseconds timestamp;
-    char name[255];
+    const char *getMAC();
+
+    const std::chrono::milliseconds getTimestamp();
 
     const char *getName() const;
     // BLE spec says that the device name field may be between 0 and 248 octets
