@@ -165,6 +165,7 @@ device_address LinuxBluetoothLowEnergySocket::convertToDeviceAddress(const char 
 }
 
 LinuxBluetoothLowEnergySocket::~LinuxBluetoothLowEnergySocket() {
+    // TODO check teardown!
     // TODO muss der scanner überhaupt deleted werden?
     delete scanner;
 

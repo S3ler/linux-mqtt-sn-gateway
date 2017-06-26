@@ -78,3 +78,6 @@ Updating (after init/update) all submodules is done by:
 
 ## Implementation notes
 We use two project as git submodules: [core-mqtt-sn-gateway](https://github.com/S3ler/core-mqtt-sn-gateway) and [arduino-linux-abstraction](https://github.com/S3ler/arduino-linux-abstraction).
+
+
+For enabling blutooth see here: https://stackoverflow.com/questions/41351514/leadvertisingmanager1-missing-from-dbus-objectmanager-getmanagedobjects

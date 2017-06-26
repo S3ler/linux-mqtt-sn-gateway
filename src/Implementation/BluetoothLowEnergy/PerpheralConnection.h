@@ -27,9 +27,9 @@ public:
 
     bool send(uint8_t* payload, uint16_t payload_length);
     bool connect(const char *mac);
-    void start_loop();
+    void run();
     void loop();
-    void stop_loop();
+    void stop();
 
     const char* getMAC();
 

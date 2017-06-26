@@ -7,8 +7,6 @@
 
 void PeripherapConnectionCreator::start_loop() {
     this->thread = std::thread(&PeripherapConnectionCreator::loop, this);
-    // TODO detaching needed?
-    // this->thread.detach();
 }
 
 void PeripherapConnectionCreator::loop() {
@@ -23,14 +21,12 @@ void PeripherapConnectionCreator::loop() {
                 delete advertise;
                 continue;
             }
-            printf("Discovered %s - '%s'\n", advertise->getMAC(), advertise->getName());
             PerpheralConnection *connection = new PerpheralConnection();
-            // TODO advertise in blacklist => fliegt auf die fresse
             addToBlacklist(advertise);
             connection->setBLESocket(bleSocket);
             connection->setAdvertise(advertise);
             connection->setPeripheralCreator(this);
-            connection->start_loop();
+            connection->run();
         }
     }
     while(!queue.empty()){

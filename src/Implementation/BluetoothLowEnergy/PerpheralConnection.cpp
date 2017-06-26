@@ -148,7 +148,7 @@ bool PerpheralConnection::connect(const char *mac) {
     return true;
 }
 
-void PerpheralConnection::start_loop() {
+void PerpheralConnection::run() {
     this->thread = std::thread(&PerpheralConnection::loop, this);
     bleSocket->addPeripheralConnection(this);
     // this->thread.detach();
@@ -161,7 +161,7 @@ void PerpheralConnection::loop() {
     creater->removeFromBlacklist(advertise);
     while (!stopped) {
         if (this->error) {
-            this->stop_loop();
+            this->stop();
             printf("Connection Error %s - '%s'\n", advertise->getMAC(), advertise->getName());
         }
     }
@@ -170,7 +170,7 @@ void PerpheralConnection::loop() {
     // TODO remove from socket
 }
 
-void PerpheralConnection::stop_loop() {
+void PerpheralConnection::stop() {
     this->stopped = true;
 }
 
