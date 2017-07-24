@@ -3,6 +3,8 @@ project(linux-mqtt-sn-gateway)
 
 set(CMAKE_CXX_STANDARD 11)
 
+
+
 include_directories(src/core-mqtt-sn-gateway/src)
 
 include_directories(src/arduino-linux-abstraction/src)
@@ -26,20 +28,34 @@ set(IMPLEMENTATIONL_FILES
         src/Implementation/LinuxGateway.cpp
         src/Implementation/LinuxGateway.h)
 
-set(MAIN_FILE
-        src/main/main.cpp)
-
-add_executable(linux-mqtt-sn-gateway ${IMPLEMENTATIONL_FILES} ${MAIN_FILE})
 
 
 
 add_subdirectory(src/core-mqtt-sn-gateway)
 add_subdirectory(src/arduino-linux-abstraction)
+add_subdirectory(src/Implementation/Ble)
 add_subdirectory(src/Implementation/paho)
-add_subdirectory(src/Implementation/BluetoothLowEnergy)
+#add_subdirectory(src/Implementation/BluetoothLowEnergy)
 add_subdirectory(src/Implementation/Tcp)
 
-target_link_libraries(linux-mqtt-sn-gateway pthread core-mqtt-sn-gateway arduino-linux-abstraction PahoLinuxMqttMessageHandler)
 
 add_library(lib-linux-mqtt-sn-gateway  ${IMPLEMENTATIONL_FILES} )
-target_link_libraries(lib-linux-mqtt-sn-gateway core-mqtt-sn-gateway arduino-linux-abstraction PahoLinuxMqttMessageHandler)
+target_link_libraries(lib-linux-mqtt-sn-gateway pthread core-mqtt-sn-gateway arduino-linux-abstraction PahoLinuxMqttMessageHandler)
+
+
+set(MAIN_FILE
+        src/main/main.cpp)
+
+add_executable(linux-mqtt-sn-gateway ${MAIN_FILE})
+target_link_libraries(linux-mqtt-sn-gateway lib-linux-mqtt-sn-gateway)
+
+
+find_package(PkgConfig REQUIRED)
+pkg_search_module(GLIB REQUIRED glib-2.0)
+include_directories(${GLIB_INCLUDE_DIRS})
+
+target_link_libraries(lib-linux-mqtt-sn-gateway
+        core-mqtt-sn-gateway
+        arduino-linux-abstraction
+        libBluetoothLowEnergySocket
+        PahoLinuxMqttMessageHandler)

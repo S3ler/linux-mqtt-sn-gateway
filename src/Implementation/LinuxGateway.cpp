@@ -9,7 +9,7 @@ bool LinuxGateway::begin() {
     logger.start_log("Linux MQTT-SN Gateway version 0.0.1a starting", 1);
 
     Gateway::setLoggerInterface(&logger);
-    Gateway::setSocketInterface(&udpSocket);
+    Gateway::setSocketInterface(&mqttsnSocket);
     Gateway::setMqttInterface(&mqtt);
     Gateway::setPersistentInterface(&persistent);
     Gateway::setSystemInterface(&systemImpl);
