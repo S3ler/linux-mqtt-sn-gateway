@@ -33,7 +33,7 @@ set(IMPLEMENTATIONL_FILES
 
 add_subdirectory(src/core-mqtt-sn-gateway)
 add_subdirectory(src/arduino-linux-abstraction)
-add_subdirectory(src/Implementation/Ble)
+add_subdirectory(src/Implementation/Ble_old)
 add_subdirectory(src/Implementation/paho)
 #add_subdirectory(src/Implementation/BluetoothLowEnergy)
 add_subdirectory(src/Implementation/Tcp)
