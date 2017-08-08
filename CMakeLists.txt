@@ -33,7 +33,7 @@ set(IMPLEMENTATIONL_FILES
 
 add_subdirectory(src/core-mqtt-sn-gateway)
 add_subdirectory(src/arduino-linux-abstraction)
-add_subdirectory(src/Implementation/Ble_old)
+#add_subdirectory(src/Implementation/Ble_old)
 add_subdirectory(src/Implementation/paho)
 #add_subdirectory(src/Implementation/BluetoothLowEnergy)
 add_subdirectory(src/Implementation/Tcp)
@@ -50,12 +50,12 @@ add_executable(linux-mqtt-sn-gateway ${MAIN_FILE})
 target_link_libraries(linux-mqtt-sn-gateway lib-linux-mqtt-sn-gateway)
 
 
-find_package(PkgConfig REQUIRED)
-pkg_search_module(GLIB REQUIRED glib-2.0)
-include_directories(${GLIB_INCLUDE_DIRS})
+#find_package(PkgConfig REQUIRED)
+#pkg_search_module(GLIB REQUIRED glib-2.0)
+#include_directories(${GLIB_INCLUDE_DIRS})
 
 target_link_libraries(lib-linux-mqtt-sn-gateway
         core-mqtt-sn-gateway
         arduino-linux-abstraction
-        libBluetoothLowEnergySocket
+        #libBluetoothLowEnergySocket
         PahoLinuxMqttMessageHandler)
