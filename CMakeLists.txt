@@ -28,19 +28,30 @@ set(IMPLEMENTATIONL_FILES
         src/Implementation/LinuxGateway.cpp
         src/Implementation/LinuxGateway.h)
 
+find_package(PkgConfig REQUIRED)
 
+# thank you: https://stackoverflow.com/questions/38515316/how-to-configure-dbus-dependencies-with-cmake
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+find_package(DBus REQUIRED)
+include_directories(${DBUS_INCLUDE_DIRS})
+
+pkg_search_module(GLIB REQUIRED glib-2.0)
+include_directories(${GLIB_INCLUDE_DIRS})
+
+include_directories(src/Implementation/Ble/SimpleBluetoothLowEnergySocket/libBLE/)
 
 
 add_subdirectory(src/core-mqtt-sn-gateway)
 add_subdirectory(src/arduino-linux-abstraction)
 #add_subdirectory(src/Implementation/Ble_old)
 add_subdirectory(src/Implementation/paho)
+add_subdirectory(src/Implementation/Ble)
 #add_subdirectory(src/Implementation/BluetoothLowEnergy)
 add_subdirectory(src/Implementation/Tcp)
 
 
 add_library(lib-linux-mqtt-sn-gateway  ${IMPLEMENTATIONL_FILES} )
-target_link_libraries(lib-linux-mqtt-sn-gateway pthread core-mqtt-sn-gateway arduino-linux-abstraction PahoLinuxMqttMessageHandler)
+target_link_libraries(lib-linux-mqtt-sn-gateway pthread core-mqtt-sn-gateway arduino-linux-abstraction PahoLinuxMqttMessageHandler libMqttSNBLESocket libgdbus)
 
 
 set(MAIN_FILE

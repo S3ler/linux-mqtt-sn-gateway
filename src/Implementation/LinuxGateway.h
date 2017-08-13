@@ -9,13 +9,14 @@
 #include <Gateway.h>
 #include <paho/PahoMqttMessageHandler.h>
 #include <atomic>
+#include <Ble/BLESocket.h>
 #include "Udp/LinuxUdpSocket.h"
 #include "LinuxPersistent.h"
 #include "LinuxLogger.h"
 #include "LinuxSystem.h"
 
 class LinuxGateway : public Gateway{
-    LinuxUdpSocket mqttsnSocket;
+    BLESocket mqttsnSocket;
     LinuxPersistent persistent;
 
     PahoMqttMessageHandler mqtt;
