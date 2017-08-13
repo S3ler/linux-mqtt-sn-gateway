@@ -18,6 +18,7 @@ bool BluetoothLowEnergySocket::begin() {
     this->connector->start();
     // now everything for bluetooth runs and is fine
     // TODO wie stelle ich fest ob auch die macs passen?!
+    mqttSnMessageHandler->notify_socket_connected();
     return true;
 }
 
@@ -45,7 +46,7 @@ bool BluetoothLowEnergySocket::send(device_address *destination, uint8_t *bytes,
         // TODO disconnect device?
         return true;
     }
-    return false;
+    return true;
 }
 
 bool BluetoothLowEnergySocket::send(device_address *destination, uint8_t *bytes, uint16_t bytes_len,
@@ -57,6 +58,9 @@ bool BluetoothLowEnergySocket::loop() {
     if (!receiver_queue.empty()) {
 
         std::shared_ptr<BluetoothLowEnergyMessage> msg = receiver_queue.pop();
+        device_address *address = (device_address *) &msg->getAddress();
+        uint8_t data[255] = {0};
+        memcpy(&data, msg->getPayload(), 255);
         mqttSnMessageHandler->receiveData((device_address *) &msg->getAddress(), (uint8_t *) msg->getPayload());
         /*
         const device_address address = msg.get()->getAddress();

@@ -6,3 +6,5 @@
 # 5.37
 
 sudo gdbserver --once localhost:8888 ./cmake-build-debug/linux-mqtt-sn-gateway
+
+sudo gdbserver --once localhost:8888 ./cmake-build-debug/runAll_Tests --gtest_filter=LinuxUdpGateway_Connect_Test.Connect_withminimumclientidsize_return_accepted:LinuxUdpGateway_Connect_Test/*.Connect_withminimumclientidsize_return_accepted:*/LinuxUdpGateway_Connect_Test.Connect_withminimumclientidsize_return_accepted/*:*/LinuxUdpGateway_Connect_Test/*.Connect_withminimumclientidsize_return_accepted --gtest_color=no

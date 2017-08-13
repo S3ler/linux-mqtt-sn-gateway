@@ -293,6 +293,10 @@ void Connection::cmd_write_tx_notify_hnd() {
 
 void Connection::cmd_set_nus_ready() {
     setState(STATE_NUS_READY);
+    // check if there is a connect message inside the tx_buffer
+    if (this->tx_buffer[1] == 0x02) {
+        this->onReceive((const uint8_t *) tx_buffer, (const uint16_t) tx_buffer[0]);
+    }
     printf("\n\n Finally -- NUS Ready \n");
 }
 

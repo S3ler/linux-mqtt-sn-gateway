@@ -102,4 +102,4 @@ endif()
 add_library(gattlib SHARED ${gattlib_SRCS})
 target_link_libraries(gattlib ${gattlib_LIBS})
 
-install(TARGETS gattlib LIBRARY DESTINATION lib)
+#install(TARGETS gattlib LIBRARY DESTINATION lib)

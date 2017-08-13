@@ -30,7 +30,8 @@ void events_handler(const uint8_t *pdu, uint16_t len, gpointer user_data) {
                 printf("nus_rx_notify_handle");
             } else if (handle == connection->nus_rx_handle) {
                 printf("nus_rx_handle");
-                connection->onReceive(pdu, len);
+                // FIXME: why are there 3 bytes too much at the begging?
+                connection->onReceive(pdu + 3, len - 3);
             }
             // HERE: notify handle
             break;
