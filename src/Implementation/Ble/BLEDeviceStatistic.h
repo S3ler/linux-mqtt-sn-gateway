@@ -23,6 +23,8 @@ public:
 
     uint8_t getServiceFailed() const;
 
+    std::string getMac() const;
+
     const std::atomic_bool &isConnectionInProgress() const;
 
     void setConnectionInProgress();
@@ -32,6 +34,11 @@ public:
     bool isFaulty();
 
     void reset();
+
+private:
+    std::string mac;
+public:
+
 
 private:
     uint8_t connectFailed;

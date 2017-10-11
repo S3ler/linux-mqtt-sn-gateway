@@ -50,7 +50,7 @@ public:
 
     void addBLEMessage(std::unique_ptr<BLEMessage> &&unique_ptr);
 
-    void addBLEConnection(std::weak_ptr<BLEConnection> bleConnection);
+    void addBLEConnection(std::shared_ptr<BLEConnection> bleConnection);
 
     void removeBLEConnection(std::string bleConnectionMac);
 

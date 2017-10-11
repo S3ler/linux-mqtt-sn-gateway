@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.6)
 project(linux-mqtt-sn-gateway)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 
 

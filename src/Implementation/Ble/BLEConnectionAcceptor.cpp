@@ -9,10 +9,17 @@
 BLEConnectionAcceptor::BLEConnectionAcceptor(BLESocket *bleSocket) : bleSocket(bleSocket), stopped(false) {}
 
 
-void BLEConnectionAcceptor::start() {
+bool BLEConnectionAcceptor::start() {
     stopped = false;
+    adapterFoundFlag.reset();
     deviceStatistics.clear();
     acceptorThread = std::thread(&BLEConnectionAcceptor::loop,this);
+    std::chrono::seconds sec(5);
+    if(!adapterFoundFlag.wait_for(sec)){
+        stop();
+        return false;
+    }
+    return true;
 }
 
 void BLEConnectionAcceptor::stop() {
@@ -24,10 +31,14 @@ void BLEConnectionAcceptor::stop() {
 
 void BLEConnectionAcceptor::loop() {
     BLE ble;
+    std::string adapterMac;
     while(!stopped){
         // wait for currentAdapter
         if(currentAdapter == nullptr){
             currentAdapter = waitForAdapter(ble);
+            adapterMac = currentAdapter->getMac();
+            currentAdapter->startScan();
+            adapterFoundFlag.set();
             continue;
         }
         std::list<std::shared_ptr<BLEDevice>> bleDevices = currentAdapter->getDevices();
@@ -35,12 +46,12 @@ void BLEConnectionAcceptor::loop() {
             if(stopped){
                 return;
             }
+            std::string mac = bleDevice->getMac();
             if(bleDevice->isBroken()){
-                // broken devices (RSSI and TxPower not availiable) are removed immediately
+                // broken devices (RSSI and TxPower not available) are removed immediately
                 currentAdapter->removeBLEDevice(bleDevice);
                 continue;
             }
-            std::string mac = bleDevice->getMac();
             if(mac.empty()){
                 // empty macs are ignored
                 currentAdapter->removeBLEDevice(bleDevice);
@@ -58,6 +69,9 @@ void BLEConnectionAcceptor::loop() {
                 }
                 auto connection = std::make_shared<BLEConnection>(bleSocket, currentAdapter, bleDevice, deviceStatistic->second);
                 connection->connect();
+            }else{
+                auto deviceStatistic = std::make_shared<BLEDeviceStatistic>(mac);
+                deviceStatistics.insert(std::make_pair(mac, deviceStatistic));
             }
         }
     }

@@ -4,7 +4,7 @@
 
 #include "BLEDeviceStatistic.h"
 
-BLEDeviceStatistic::BLEDeviceStatistic(std::string mac) : connectFailed(0), serviceFailed(0), connectionInProgress(false){
+BLEDeviceStatistic::BLEDeviceStatistic(std::string mac) : mac(mac), connectFailed(0), serviceFailed(0), connectionInProgress(false){
     lastChanged = std::chrono::system_clock::now();
 }
 
@@ -61,5 +61,9 @@ void BLEDeviceStatistic::reset() {
     connectFailed = 0;
     serviceFailed = 0;
     lastChanged = std::chrono::system_clock::now();
+}
+
+std::string BLEDeviceStatistic::getMac() const {
+    return mac;
 }
 

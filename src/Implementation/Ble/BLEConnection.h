@@ -23,9 +23,11 @@ public:
                   const std::shared_ptr<BLEDevice> &bleDevice,
                   const std::shared_ptr<BLEDeviceStatistic> bleDeviceStatistic);
 
+    virtual ~BLEConnection();
+
     void connect();
 
-    void handleConnection();
+    void handleConnection(std::shared_ptr<BLEConnection> shared_this);
 
     void stop();
 
@@ -39,7 +41,7 @@ private:
     std::shared_ptr<BLEDevice> bleDevice;
     std::shared_ptr<BLEDeviceStatistic> bleDeviceStatistic;
 
-    std::thread connectionThread;
+    std::thread* connectionThread;
     std::shared_ptr<BLENUSConnection> nusConnection;
     std::atomic_bool signalInterruptReceived;
     std::shared_ptr<BLENUSConnection> bleNUSConnection;

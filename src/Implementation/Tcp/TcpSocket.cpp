@@ -1,4 +1,4 @@
-//
+//git submodule update --remote --merge
 // Created by bele on 13.06.17.
 //
 

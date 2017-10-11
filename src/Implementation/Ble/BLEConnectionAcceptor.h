@@ -23,12 +23,13 @@ public:
     explicit BLEConnectionAcceptor(BLESocket *bleSocket);
 
 public:
-    void start();
+    bool start();
     void stop();
     void loop();
     std::string getAdapterMac();
 private:
     BLESocket* bleSocket;
+    safe_flag adapterFoundFlag;
     std::atomic_bool stopped;
     std::thread acceptorThread;
     std::shared_ptr<BLEAdapter> currentAdapter= nullptr;
@@ -37,6 +38,7 @@ private:
     std::unordered_map<std::string, std::shared_ptr<BLEDeviceStatistic>> deviceStatistics;
 
     bool deviceStatisticsContains(std::string mac);
+
 };
 
 

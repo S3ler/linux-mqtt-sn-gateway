@@ -2,13 +2,17 @@
 // Created by bele on 09.08.17.
 //
 
+#include <iomanip>
 #include "BLESocket.h"
 
 bool BLESocket::begin() {
     connectionAcceptor = std::make_unique<BLEConnectionAcceptor>(this);
+    if(!connectionAcceptor->start()){
+        return false;
+    }
     mqttSnMessageHandler->notify_socket_connected();
     // TODO rest der initialisierung
-    return false;
+    return true;
 }
 
 void BLESocket::setLogger(LoggerInterface *logger) {
@@ -83,9 +87,10 @@ bool BLESocket::loop() {
     return true;
 }
 
-void BLESocket::addBLEConnection(std::weak_ptr<BLEConnection> bleConnection) {
+void BLESocket::addBLEConnection(std::shared_ptr<BLEConnection> bleConnection) {
     std::lock_guard<std::mutex> bleConnectionsLockGuard(bleConnectionsMutex);
-    if (auto sp = bleConnection.lock()) {
+    std::weak_ptr<BLEConnection> weakptr_bleConnection = bleConnection;
+    if (auto sp = weakptr_bleConnection.lock()) {
         bleConnections.insert(std::make_pair(sp->getMac(), bleConnection));
     }
 }
@@ -105,12 +110,17 @@ void BLESocket::addBLEMessage(std::unique_ptr<BLEMessage> &&unique_ptr) {
 
 std::string BLESocket::getMacFromDeviceAddress(device_address *deviceAddress) {
     // TODO check if works
-    char macStr[17];
-    sscanf(macStr, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx",
-           deviceAddress->bytes[0], deviceAddress->bytes[1],
-           deviceAddress->bytes[2], deviceAddress->bytes[3],
-           deviceAddress->bytes[4], deviceAddress->bytes[5]);
-    return std::string(macStr);
+    // https://stackoverflow.com/questions/7639656/getting-a-buffer-into-a-stringstream-in-hex-representation/7639754#7639754
+    char macStr[17] = {0};
+    std::stringstream ss;
+    ss << std::hex << std::setfill('0') << std::uppercase;
+    for(uint8_t l = 0; l < sizeof(device_address);l++){
+        ss << std::setw(2) << static_cast<unsigned>(deviceAddress->bytes[l]);
+        if(l != (sizeof(device_address)-1)){
+            ss << ":";
+        }
+    }
+    return ss.str();
 }
 
 device_address BLESocket::getDeviceAddressFromMac(std::string mac) {
@@ -136,18 +146,18 @@ device_address BLESocket::getDeviceAddressFromMac(std::string mac) {
 BLESocket::~BLESocket() {
     connectionAcceptor->stop();
 
-    {
+    /*{
         std::lock_guard<std::mutex> bleConnectionsLockGuard(bleConnectionsMutex);
-        for (auto iterator = bleConnections.begin(); iterator != bleConnections.end(); /*++iterator*/) {
-            if (auto spBLEConnection = iterator->second.lock()) {}
-            else {
-                bleConnections.erase(iterator);
+        for (auto iterator = bleConnections.begin(); iterator != bleConnections.end(); /*++iterator*//*) {
+        /*        if (auto spBLEConnection = iterator->second.lock()) {}
+                else {
+                    bleConnections.erase(iterator);
+                }
             }
-        }
-    }
+        }*/
 
     // TODO check if the compiler does not optimise this!
-    while (!bleConnections.empty()) {}
-}
+        /*while (!bleConnections.empty()) {}*/
+    }
 
 
