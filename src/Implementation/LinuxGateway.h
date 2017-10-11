@@ -16,7 +16,7 @@
 #include "LinuxSystem.h"
 
 class LinuxGateway : public Gateway{
-    BLESocket mqttsnSocket;
+    LinuxUdpSocket mqttsnSocket;
     LinuxPersistent persistent;
 
     PahoMqttMessageHandler mqtt;
