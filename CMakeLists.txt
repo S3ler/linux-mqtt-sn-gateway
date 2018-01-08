@@ -4,6 +4,8 @@ project(linux-mqtt-sn-gateway)
 set(CMAKE_CXX_STANDARD 14)
 
 
+add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_SERIAL)
+
 
 include_directories(src/core-mqtt-sn-gateway/src)
 
@@ -17,6 +19,8 @@ include_directories(src/Implementation)
 include_directories(src/main)
 
 set(IMPLEMENTATIONL_FILES
+        src/Implementation/Serial/LinuxSerialSocket.h
+        src/Implementation/Serial/LinuxSerialSocket.cpp
         src/Implementation/Udp/LinuxUdpSocket.cpp
         src/Implementation/Udp/LinuxUdpSocket.h
         src/Implementation/LinuxSystem.cpp

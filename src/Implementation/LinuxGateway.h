@@ -10,13 +10,26 @@
 #include <paho/PahoMqttMessageHandler.h>
 #include <atomic>
 #include <Ble/BLESocket.h>
+#include <Serial/LinuxSerialSocket.h>
 #include "Udp/LinuxUdpSocket.h"
 #include "LinuxPersistent.h"
 #include "LinuxLogger.h"
 #include "LinuxSystem.h"
 
-class LinuxGateway : public Gateway{
+class LinuxGateway : public Gateway {
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_UDP)
     LinuxUdpSocket mqttsnSocket;
+#elif defined(GATEWAY_TRANSMISSION_PROTOCOL_TCP)
+#error "gateway transmission protocol TCP not implemented yet."
+#elif defined(GATEWAY_TRANSMISSION_PROTOCOL_BLE)
+    BLESocket mqttsnSocket;
+#elif defined(GATEWAY_TRANSMISSION_PROTOCOL_SERIAL)
+    LinuxSerialSocket mqttsnSocket;
+#else
+#error "No gateway transmission protocol defined."
+#endif
+
+
     LinuxPersistent persistent;
 
     PahoMqttMessageHandler mqtt;
@@ -29,12 +42,14 @@ class LinuxGateway : public Gateway{
 
 public:
     bool begin();
-    void setRootPath( char* rootPath);
+
+    void setRootPath(char *rootPath);
 
     void start_loop();
-    void dispatch_loop();
-    void stop_loop();
 
+    void dispatch_loop();
+
+    void stop_loop();
 
 
 };
