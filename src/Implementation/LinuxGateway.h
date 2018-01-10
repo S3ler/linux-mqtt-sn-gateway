@@ -9,12 +9,14 @@
 #include <Gateway.h>
 #include <paho/PahoMqttMessageHandler.h>
 #include <atomic>
-#include <Ble/BLESocket.h>
 #include <Serial/LinuxSerialSocket.h>
 #include "Udp/LinuxUdpSocket.h"
 #include "LinuxPersistent.h"
 #include "LinuxLogger.h"
 #include "LinuxSystem.h"
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_BLE)
+#include <Ble/BLESocket.h>
+#endif
 
 class LinuxGateway : public Gateway {
 #if defined(GATEWAY_TRANSMISSION_PROTOCOL_UDP)

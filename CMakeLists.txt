@@ -3,8 +3,9 @@ project(linux-mqtt-sn-gateway)
 
 set(CMAKE_CXX_STANDARD 14)
 
+set(BUILD_BLE OFF)
 
-add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_SERIAL)
+add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_UDP)
 
 
 include_directories(src/core-mqtt-sn-gateway/src)
@@ -32,6 +33,8 @@ set(IMPLEMENTATIONL_FILES
         src/Implementation/LinuxGateway.cpp
         src/Implementation/LinuxGateway.h)
 
+
+if(${BUILD_BLE})
 find_package(PkgConfig REQUIRED)
 
 # thank you: https://stackoverflow.com/questions/38515316/how-to-configure-dbus-dependencies-with-cmake
@@ -43,20 +46,25 @@ pkg_search_module(GLIB REQUIRED glib-2.0)
 include_directories(${GLIB_INCLUDE_DIRS})
 
 include_directories(src/Implementation/Ble/SimpleBluetoothLowEnergySocket/libBLE/)
+endif(${BUILD_BLE})
 
 
 add_subdirectory(src/core-mqtt-sn-gateway)
 add_subdirectory(src/arduino-linux-abstraction)
 #add_subdirectory(src/Implementation/Ble_old)
 add_subdirectory(src/Implementation/paho)
+if(${BUILD_BLE})
 add_subdirectory(src/Implementation/Ble)
+endif(${BUILD_BLE})
 #add_subdirectory(src/Implementation/BluetoothLowEnergy)
 add_subdirectory(src/Implementation/Tcp)
 
 
-add_library(lib-linux-mqtt-sn-gateway  ${IMPLEMENTATIONL_FILES} )
-target_link_libraries(lib-linux-mqtt-sn-gateway pthread core-mqtt-sn-gateway arduino-linux-abstraction PahoLinuxMqttMessageHandler libMqttSNBLESocket libgdbus)
-
+add_library(lib-linux-mqtt-sn-gateway ${IMPLEMENTATIONL_FILES})
+target_link_libraries(lib-linux-mqtt-sn-gateway pthread core-mqtt-sn-gateway arduino-linux-abstraction PahoLinuxMqttMessageHandler)
+if(${BUILD_BLE})
+target_link_libraries(lib-linux-mqtt-sn-gateway libMqttSNBLESocket libgdbus)
+endif(${BUILD_BLE})
 
 set(MAIN_FILE
         src/main/main.cpp)
