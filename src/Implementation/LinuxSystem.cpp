@@ -3,11 +3,14 @@
 //
 
 #include "LinuxSystem.h"
-
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
+LinuxSystem::LinuxSystem() { }
+#else
 #ifndef Arduino_h
 LinuxSystem::LinuxSystem() {
     resetTimerValue();
 }
+#endif
 #endif
 
 void LinuxSystem::set_heartbeat(uint32_t period) {

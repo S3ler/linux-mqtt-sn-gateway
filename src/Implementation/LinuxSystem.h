@@ -7,11 +7,14 @@
 
 
 #include <System.h>
+#include <exception>
 
 #ifndef Arduino_h
-
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
+#include <RasPi.h>
+#else
 #include <Arduino.h>
-
+#endif
 #endif
 
 class LinuxSystem : public System {

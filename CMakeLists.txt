@@ -5,7 +5,9 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(BUILD_BLE OFF)
 
-add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_UDP)
+set(BUILD_RPI ON)
+add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
+#add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_UDP)
 
 
 include_directories(src/core-mqtt-sn-gateway/src)
@@ -59,19 +61,38 @@ endif(${BUILD_BLE})
 #add_subdirectory(src/Implementation/BluetoothLowEnergy)
 add_subdirectory(src/Implementation/Tcp)
 
+if(${BUILD_RPI})
+include_directories(src/Implementation/mqtt-sn-sockets)
+include_directories(src/Implementation/mqtt-sn-sockets/RadioHead)
+include_directories(src/Implementation/mqtt-sn-sockets/RadioHead/RHutil)
+
+add_subdirectory(src/Implementation/mqtt-sn-sockets)
+endif(${BUILD_RPI})
+
+
 
 add_library(lib-linux-mqtt-sn-gateway ${IMPLEMENTATIONL_FILES})
 target_link_libraries(lib-linux-mqtt-sn-gateway pthread core-mqtt-sn-gateway arduino-linux-abstraction PahoLinuxMqttMessageHandler)
 if(${BUILD_BLE})
 target_link_libraries(lib-linux-mqtt-sn-gateway libMqttSNBLESocket libgdbus)
 endif(${BUILD_BLE})
+if(${BUILD_RPI})
+#target_compile_definitions(lib-linux-mqtt-sn-gateway PRIVATE -DRH_PLATFORM=RH_PLATFORM_RASPI)
+target_compile_definitions(lib-linux-mqtt-sn-gateway PRIVATE -DRASPBERRY_PI -DBCM2835_NO_DELAY_COMPATIBILITY)
+add_definitions(-DRH_PLATFORM=RH_PLATFORM_RASPI)
+target_link_libraries(lib-linux-mqtt-sn-gateway lib-rh-nrf24-socket bcm2835)
+endif(${BUILD_RPI})
+
 
 set(MAIN_FILE
         src/main/main.cpp)
 
 add_executable(linux-mqtt-sn-gateway ${MAIN_FILE})
 target_link_libraries(linux-mqtt-sn-gateway lib-linux-mqtt-sn-gateway)
-
+if(${BUILD_RPI})
+target_compile_definitions(linux-mqtt-sn-gateway PRIVATE -DRH_PLATFORM=RH_PLATFORM_RASPI)
+target_link_libraries(linux-mqtt-sn-gateway lib-rh-nrf24-socket bcm2835)
+endif(${BUILD_RPI})
 
 #find_package(PkgConfig REQUIRED)
 #pkg_search_module(GLIB REQUIRED glib-2.0)

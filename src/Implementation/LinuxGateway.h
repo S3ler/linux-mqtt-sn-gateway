@@ -17,6 +17,12 @@
 #if defined(GATEWAY_TRANSMISSION_PROTOCOL_BLE)
 #include <Ble/BLESocket.h>
 #endif
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
+#include <bcm2835.h>
+#include <RF95Socket.h>
+#include <RH_NRF24.h>
+#include <RHReliableDatagram.h>
+#endif
 
 class LinuxGateway : public Gateway {
 #if defined(GATEWAY_TRANSMISSION_PROTOCOL_UDP)
@@ -27,6 +33,13 @@ class LinuxGateway : public Gateway {
     BLESocket mqttsnSocket;
 #elif defined(GATEWAY_TRANSMISSION_PROTOCOL_SERIAL)
     LinuxSerialSocket mqttsnSocket;
+#elif defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
+    //void setRadioHeadSocket(RF95Socket& mqttsnSocket);
+    RH_NRF24 rh_driver;//(2,15);//(RPI_V2_GPIO_P1_18, RPI_V2_GPIO_P1_24);
+    RHReliableDatagram manager;//(rh_driver);//(rh_driver);
+    RF95Socket mqttsnSocket;
+#elif defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_RF95)
+
 #else
 #error "No gateway transmission protocol defined."
 #endif
@@ -43,6 +56,10 @@ class LinuxGateway : public Gateway {
     std::atomic<bool> stopped{false};
 
 public:
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
+    LinuxGateway();
+#endif
+
     bool begin();
 
     void setRootPath(char *rootPath);
@@ -52,7 +69,9 @@ public:
     void dispatch_loop();
 
     void stop_loop();
-
+#if defined(D_GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
+    void setRadioHeadSocket(RF95Socket* mqttsnSocket);
+#endif
 
 };
 

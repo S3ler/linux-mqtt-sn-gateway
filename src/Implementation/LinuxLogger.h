@@ -9,18 +9,26 @@
 #include <LoggerInterface.h>
 
 #ifndef Arduino_h
-
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
+#include <RasPi.h>
+#else
 #include <Arduino.h>
-
+#endif
 #endif
 
 class LinuxLogger : public LoggerInterface {
 private:
     uint8_t current_log_lvl = 2;
     uint8_t last_started_log_lvl = UINT8_MAX;
+
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
+    // already as extern Serial in simulator.h
+#else
 #ifndef Arduino_h
     SerialLinux Serial;
 #endif
+#endif
+
 
 public:
     bool begin() override;
