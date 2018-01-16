@@ -14,3 +14,9 @@ cmake-build-debug/*
 html/*
 
 *.a
+
+MQTT.SUB
+linux-mqtt-sn-gateway.cbp
+linux-mqtt-sn-gateway.layout
+
+linux-mqtt-sn-gateway

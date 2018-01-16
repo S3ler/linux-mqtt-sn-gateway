@@ -8,3 +8,6 @@
 	path = src/Implementation/Ble/SimpleBluetoothLowEnergySocket
 	url = git@github.com:S3ler/SimpleBluetoothLowEnergySocket.git
 	branch = master
+[submodule "src/Implementation/mqtt-sn-sockets"]
+	path = src/Implementation/mqtt-sn-sockets
+	url = git@github.com:S3ler/mqtt-sn-sockets.git
