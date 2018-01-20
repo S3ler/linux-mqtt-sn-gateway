@@ -23,6 +23,12 @@
 #include <RH_NRF24.h>
 #include <RHReliableDatagram.h>
 #endif
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_RF95)
+#include <RF95Socket.h>
+#include <RH_RF95.h>
+#include <RHReliableDatagram.h>
+#include <Arduino.h>
+#endif
 
 class LinuxGateway : public Gateway {
 #if defined(GATEWAY_TRANSMISSION_PROTOCOL_UDP)
@@ -39,7 +45,10 @@ class LinuxGateway : public Gateway {
     RHReliableDatagram manager;//(rh_driver);//(rh_driver);
     RF95Socket mqttsnSocket;
 #elif defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_RF95)
-
+    RH_RF95 rh_driver;
+    RHReliableDatagram manager;
+    RF95Socket mqttsnSocket;
+    SerialLinux Serial;
 #else
 #error "No gateway transmission protocol defined."
 #endif
@@ -59,6 +68,9 @@ public:
 #if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
     LinuxGateway();
 #endif
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_RF95)
+    LinuxGateway();
+#endif
 
     bool begin();
 
@@ -69,9 +81,6 @@ public:
     void dispatch_loop();
 
     void stop_loop();
-#if defined(D_GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
-    void setRadioHeadSocket(RF95Socket* mqttsnSocket);
-#endif
 
 };
 

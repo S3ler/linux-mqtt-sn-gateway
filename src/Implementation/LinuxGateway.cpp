@@ -12,6 +12,13 @@
 	 { }
 #endif
 
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_RF95)
+    LinuxGateway::LinuxGateway() :
+        rh_driver(),
+        manager(rh_driver, OWN_ADDRESS)
+         { }
+#endif
+
 
 bool LinuxGateway::begin() {
     logger.start_log("Linux MQTT-SN Gateway version 0.0.1a starting", 1);
@@ -32,12 +39,26 @@ bool LinuxGateway::begin() {
     mqttsnSocket.setManager(&manager);
 #endif
 
-    Gateway::setLoggerInterface(&logger);
-#if defined(D_GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
-    Gateway::setSocketInterface(mqttsnSocket);
-#else
-    Gateway::setSocketInterface(&mqttsnSocket);
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_RF95)
+    wiringPiSetupGpio();
+    
+    // Defaults after init are 434.0MHz, 13dBm, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on
+    if (!rh_driver.init()) {
+        Serial.println("Failure init DRIVER_RH_RF95");
+    }
+
+    if (!rh_driver.setFrequency(FREQUENCY)) {
+        Serial.println("Failure set FREQUENCY");
+    }
+
+    if(!rh_driver.setModemConfig(RH_RF95::MODEM_CONFIG_CHOICE)){
+        Serial.println("Failure set MODEM_CONFIG_CHOICE");
+    }
+    mqttsnSocket.setManager(&manager);
 #endif
+
+    Gateway::setLoggerInterface(&logger);
+    Gateway::setSocketInterface(&mqttsnSocket);
     Gateway::setMqttInterface(&mqtt);
     Gateway::setPersistentInterface(&persistent);
     Gateway::setSystemInterface(&systemImpl);
@@ -65,8 +86,3 @@ void LinuxGateway::dispatch_loop() {
     }
 }
 
-#if defined(D_GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
-void LinuxGateway::setRadioHeadSocket(RF95Socket* mqttsnSocket){
-    this->mqttsnSocket = mqttsnSocket;
-}
-#endif

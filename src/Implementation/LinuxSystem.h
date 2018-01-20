@@ -12,7 +12,11 @@
 #ifndef Arduino_h
 #if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
 #include <RasPi.h>
+#elif defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_RF95)
+//#include <RasPi.h>
+#include <wiringPi.h>
 #else
+//#include <wiringPi.h>
 #include <Arduino.h>
 #endif
 #endif

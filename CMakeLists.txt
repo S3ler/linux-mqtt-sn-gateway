@@ -5,10 +5,16 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(BUILD_BLE OFF)
 
-set(BUILD_RPI ON)
+set(BUILD_RPI OFF)
+if(${BUILD_RPI})
 add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
-#add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_UDP)
+endif(${BUILD_RPI})
 
+set(BUILD_LORA ON)
+if(${BUILD_LORA})
+add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_RF95)
+endif(${BUILD_LORA})
+#add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_UDP)
 
 include_directories(src/core-mqtt-sn-gateway/src)
 
@@ -62,13 +68,18 @@ endif(${BUILD_BLE})
 add_subdirectory(src/Implementation/Tcp)
 
 if(${BUILD_RPI})
+add_subdirectory(src/Implementation/mqtt-sn-sockets)
 include_directories(src/Implementation/mqtt-sn-sockets)
 include_directories(src/Implementation/mqtt-sn-sockets/RadioHead)
 include_directories(src/Implementation/mqtt-sn-sockets/RadioHead/RHutil)
-
-add_subdirectory(src/Implementation/mqtt-sn-sockets)
 endif(${BUILD_RPI})
 
+if(${BUILD_LORA})
+add_subdirectory(src/Implementation/mqtt-sn-sockets)
+include_directories(src/Implementation/mqtt-sn-sockets)
+include_directories(src/Implementation/mqtt-sn-sockets/RadioHeadRpi)
+include_directories(src/Implementation/mqtt-sn-sockets/RadioHeadRpi/RHutil)
+endif(${BUILD_LORA})
 
 
 add_library(lib-linux-mqtt-sn-gateway ${IMPLEMENTATIONL_FILES})
@@ -83,6 +94,13 @@ add_definitions(-DRH_PLATFORM=RH_PLATFORM_RASPI)
 target_link_libraries(lib-linux-mqtt-sn-gateway lib-rh-nrf24-socket bcm2835)
 endif(${BUILD_RPI})
 
+if(${BUILD_LORA})
+target_compile_definitions(lib-linux-mqtt-sn-gateway PRIVATE -DRH_PLATFORM=RH_PLATFORM_RPI)
+target_compile_definitions(lib-linux-mqtt-sn-gateway PRIVATE -DFREQUENCY=868)
+target_compile_definitions(lib-linux-mqtt-sn-gateway PRIVATE -DMODEM_CONFIG_CHOICE=Bw31_25Cr48Sf512)
+target_link_libraries(lib-linux-mqtt-sn-gateway lib-rh96-socket wiringPi)
+endif(${BUILD_LORA})
+
 
 set(MAIN_FILE
         src/main/main.cpp)
@@ -90,10 +108,13 @@ set(MAIN_FILE
 add_executable(linux-mqtt-sn-gateway ${MAIN_FILE})
 target_link_libraries(linux-mqtt-sn-gateway lib-linux-mqtt-sn-gateway)
 if(${BUILD_RPI})
-target_compile_definitions(linux-mqtt-sn-gateway PRIVATE -DRH_PLATFORM=RH_PLATFORM_RASPI)
+#target_compile_definitions(linux-mqtt-sn-gateway PRIVATE -DRH_PLATFORM=RH_PLATFORM_RASPI)
 target_link_libraries(linux-mqtt-sn-gateway lib-rh-nrf24-socket bcm2835)
 endif(${BUILD_RPI})
-
+if(${BUILD_LORA})
+target_compile_definitions(linux-mqtt-sn-gateway PRIVATE -DRH_PLATFORM=RH_PLATFORM_RPI)
+target_link_libraries(linux-mqtt-sn-gateway lib-rh96-socket wiringPi)
+endif(${BUILD_LORA})
 #find_package(PkgConfig REQUIRED)
 #pkg_search_module(GLIB REQUIRED glib-2.0)
 #include_directories(${GLIB_INCLUDE_DIRS})
