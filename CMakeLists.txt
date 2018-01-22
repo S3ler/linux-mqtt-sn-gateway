@@ -10,11 +10,11 @@ if(${BUILD_RPI})
 add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
 endif(${BUILD_RPI})
 
-set(BUILD_LORA OFF)
+set(BUILD_LORA ON)
 if(${BUILD_LORA})
 add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_RF95)
 endif(${BUILD_LORA})
-add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_UDP)
+#add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_UDP)
 
 include_directories(src/core-mqtt-sn-gateway/src)
 
