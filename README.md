@@ -59,31 +59,25 @@ Example TOPICS.PRE file:
 
 First clone the repository
 
-    git clone git@github.com:S3ler/linux-udp-mqtt-sn-test-client.git
-
-then change into folder
-
-    cd linux-mqtt-sn-gateway
-
-finally init/update all submodules
-
-    git submodule init
-    git submodule update
+    git clone --recursive-submodule https://github.com/S3ler/linux-mqtt-sn-gateway.git
 
 done.
 
-Updating (after init/update) all submodules is done by:
 
-    git submodule update --recursive --remote
+## BLE (very unstable - not working)
     
 For Bluetooth development install:
 
     apt install pkg-config
     apt install libglib2.0-dev
     apt install libbluetooth-dev
+    
+For enabling blutooth see here: https://stackoverflow.com/questions/41351514/leadvertisingmanager1-missing-from-dbus-objectmanager-getmanagedobjects
 
 ## Implementation notes
-We use two project as git submodules: [core-mqtt-sn-gateway](https://github.com/S3ler/core-mqtt-sn-gateway) and [arduino-linux-abstraction](https://github.com/S3ler/arduino-linux-abstraction).
+We use two project as git submodules:
+ * [core-mqtt-sn-gateway](https://github.com/S3ler/core-mqtt-sn-gateway)
+ * [arduino-linux-abstraction](https://github.com/S3ler/arduino-linux-abstraction)
+ * [mqtt-sn-sockets](https://github.com/S3ler/mqtt-sn-sockets)
+ * [SimpleBluetoothLowEnergySocket](https://github.com/S3ler/SimpleBluetoothLowEnergySocket)
 
-
-For enabling blutooth see here: https://stackoverflow.com/questions/41351514/leadvertisingmanager1-missing-from-dbus-objectmanager-getmanagedobjects
