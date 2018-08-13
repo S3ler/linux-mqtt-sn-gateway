@@ -77,7 +77,7 @@ Example [TOPICS.PRE](https://github.com/S3ler/linux-mqtt-sn-gateway/blob/master/
 
 Clone the repository and initialize CMAKE with the Transmission Protocol (e.g. UDP)
 
-    git clone --recursive-submodule https://github.com/S3ler/linux-mqtt-sn-gateway.git
+    git clone --recursive https://github.com/S3ler/linux-mqtt-sn-gateway.git
     cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DTRANSMISSION_PROTOCOL=UDP
     
 done.
