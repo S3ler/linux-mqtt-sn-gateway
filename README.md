@@ -28,7 +28,7 @@ See the  Transmission Technology to Architecture Matrix.
 
 
 
-## Getting started - running
+## Getting started x86 - running
 This is the section for all of you who only want to use the gateway.
 We start with running the linux-mqtt-sn-gateway on the standard x86 architecture.
 
@@ -75,7 +75,7 @@ Example [TOPICS.PRE](https://github.com/S3ler/linux-mqtt-sn-gateway/blob/master/
 	50 /some/predefined/topic
 	20 /another/predefined/topic
 
-## Getting started - development
+## Getting started x86 - development
 
 Clone the repository and initialize CMAKE with the Transmission Protocol (e.g. UDP)
 
@@ -85,6 +85,9 @@ Clone the repository and initialize CMAKE with the Transmission Protocol (e.g. U
 done.
 
 For testing see the [test-mqtt-sn-gateway](https://github.com/S3ler/test-mqtt-sn-gateway) project.
+
+## Getting started ARM (RPI) - running
+
 
 ## State of Project
 Unfortunately we do not support all features defined in the [MQTT-SN Standard](http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf).
