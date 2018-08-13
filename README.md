@@ -30,7 +30,9 @@ See the  Transmission Technology to Architecture Matrix.
 
 ## Getting started - running
 This is the section for all of you who only want to use the gateway.
-The gateway need the following configurations files: MQTT.CON, TOPICS.PRE.
+We start with running the linux-mqtt-sn-gateway on the standard x86 architecture.
+
+The gateway needs the following configurations files: MQTT.CON, TOPICS.PRE.
 Put these files into the execution directory (next to the binary).
 The linux-mqtt-sn-gateway will pick and create needed files there.
 
