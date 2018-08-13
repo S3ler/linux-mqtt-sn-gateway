@@ -1,5 +1,7 @@
 # linux-mqtt-sn-gateway
 MQTT-SN gateway for linux based operating systems.
+It is a aggregating Gateway implementation.
+
 It glues the [core-mqtt-sn-gateway](https://github.com/S3ler/core-mqtt-sn-gateway) together with [transmission technology implementations](https://github.com/S3ler/linux-mqtt-sn-gateway/tree/master/src/Implementation), [MQTT-Client](https://github.com/S3ler/linux-mqtt-sn-gateway/tree/master/src/Implementation/paho) and the [core component cmplementations](https://github.com/S3ler/linux-mqtt-sn-gateway/tree/master/src/Implementation) (LinuxGateway, LinuxLogger, LinuxPersistent, LinuxSystem).
 
 ## Supported Architectures
@@ -51,7 +53,7 @@ You can provide a will for the gateway (optional):
 
 Note that you need to provide all values of the will (there are no default values) or the gateway will connect without a will.
 
-Example [MQTT.CON file](https://github.com/S3ler/linux-mqtt-sn-gateway/blob/master/cmake-build-debug/MQTT.CON):
+Example [MQTT.CON](https://github.com/S3ler/linux-mqtt-sn-gateway/blob/master/cmake-build-debug/MQTT.CON) file:
 
 	brokeraddress 192.168.178.33
 	brokerport 1884
@@ -81,12 +83,23 @@ Clone the repository and initialize CMAKE with the Transmission Protocol (e.g. U
 done.
 
 ## State of Project
-Note about the current status of this project: It is completely work in progress and only partly tested.
+Unfortunately we do not support all features defined in the [MQTT-SN Standard]8http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf).
 
-Untested or not implemented:
-2. Wildcard subscription (inlcuding registrations messages from gateway to client)
-3. Will update
-4. Retransmission
+Not Implemented (yet):
+ * wildcard subscription
+ * will update procedure
+ * retransmission procedure
+ * QoS 2 publishing
+ * MQTT-SN Forward Encapsulation
+ 
+Everything else is implemented and tested (see [test-mqtt-sn-gateway](https://github.com/S3ler/test-mqtt-sn-gateway) project).
+
+## Implementation notes
+We use four project as git submodules:
+ * [core-mqtt-sn-gateway](https://github.com/S3ler/core-mqtt-sn-gateway)
+ * [arduino-linux-abstraction](https://github.com/S3ler/arduino-linux-abstraction)
+ * [mqtt-sn-sockets](https://github.com/S3ler/mqtt-sn-sockets)
+ * [SimpleBluetoothLowEnergySocket](https://github.com/S3ler/SimpleBluetoothLowEnergySocket)
 
 It runs only on Linux system but it is written against the Arduino Framework by using Linux based fake implementations for Arduino functions and libraris. It runs (successfully) on a NodeMCU with Arduino Core and a SPI SD-Card reader.
 This implementation is a aggregating gateway for MQTT-SN. The aim of MQTT-SN is to support Wireless Sensor Networks (WSNs) with very large numbers of battery-operated sensors and actuators (SAs). This gateway is designed with platform independence in mind. Other MQTT-SN gateway implementation at least need a operating system (or only bridge messages). To fulfill the requierement the implementation shall use little RAM, no dynamic memory allocation, platform and hardware portability by interfaces. Further it does not rely on any physical layer, media access control (e.g IEEE 802.15.4), network layer (e.g. 6LoWPAN) or transport layer (e.g. UDP/TCP) standard or implementation.
@@ -100,11 +113,3 @@ For Bluetooth development install:
     apt install libbluetooth-dev
     
 For enabling blutooth see here: https://stackoverflow.com/questions/41351514/leadvertisingmanager1-missing-from-dbus-objectmanager-getmanagedobjects
-
-## Implementation notes
-We use two project as git submodules:
- * [core-mqtt-sn-gateway](https://github.com/S3ler/core-mqtt-sn-gateway)
- * [arduino-linux-abstraction](https://github.com/S3ler/arduino-linux-abstraction)
- * [mqtt-sn-sockets](https://github.com/S3ler/mqtt-sn-sockets)
- * [SimpleBluetoothLowEnergySocket](https://github.com/S3ler/SimpleBluetoothLowEnergySocket)
-
