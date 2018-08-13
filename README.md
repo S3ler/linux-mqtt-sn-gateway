@@ -1,5 +1,6 @@
 # linux-mqtt-sn-gateway
 MQTT-SN gateway for linux based operating systems.
+It glues the [core-mqtt-sn-gateway](https://github.com/S3ler/core-mqtt-sn-gateway) together with [transmission technology implementations](https://github.com/S3ler/linux-mqtt-sn-gateway/tree/master/src/Implementation), [MQTT-Client](https://github.com/S3ler/linux-mqtt-sn-gateway/tree/master/src/Implementation/paho) and the [core component cmplementations](https://github.com/S3ler/linux-mqtt-sn-gateway/tree/master/src/Implementation) (LinuxGateway, LinuxLogger, LinuxPersistent, LinuxSystem).
 
 ## Supported Architectures
 At the moment we support:
@@ -28,7 +29,8 @@ See the  Transmission Technology to Architecture Matrix.
 ## Getting started - running
 This is the section for all of you who only want to use the gateway.
 The gateway need the following configurations files: MQTT.CON, TOPICS.PRE.
-Put these files into the execution directory.
+Put these files into the execution directory (next to the binary).
+The linux-mqtt-sn-gateway will pick and create needed files there.
 
 The MQTT.CON file is the configuration file of the MQTT client.
 It is Key Value based. Every line contains one key with the corresponding value after the first space.
