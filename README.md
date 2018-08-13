@@ -85,7 +85,7 @@ done.
 For testing see the [test-mqtt-sn-gateway](https://github.com/S3ler/test-mqtt-sn-gateway) project.
 
 ## State of Project
-Unfortunately we do not support all features defined in the [MQTT-SN Standard]8http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf).
+Unfortunately we do not support all features defined in the [MQTT-SN Standard](http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf).
 
 Not Implemented (yet):
  * wildcard subscription
