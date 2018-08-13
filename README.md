@@ -28,9 +28,9 @@ See the  Transmission Technology to Architecture Matrix.
 
 
 
-## Getting started x86 - running
+## Getting started UDP (x86 & ARM) - running
 This is the section for all of you who only want to use the gateway.
-We start with running the linux-mqtt-sn-gateway on the standard x86 architecture.
+Get a pre-built binary from [here](TODO).
 
 The gateway needs the following configurations files: MQTT.CON, TOPICS.PRE.
 Put these files into the execution directory (next to the binary).
@@ -86,8 +86,59 @@ done.
 
 For testing see the [test-mqtt-sn-gateway](https://github.com/S3ler/test-mqtt-sn-gateway) project.
 
-## Getting started ARM (RPI) - running
+## Getting started ARM (RPI & UDP) - development
+At the moment we do not configure cmake for cross-compilation.
+The easiest way to get started is to work on a Raspberry Pi directly.
+You need a least CMake Version 3.0 for the project. Maybe you need to compile CMake on the Raspberry Pi before starting development.
 
+The other steps are the same as for x86:
+Clone the repository and initialize CMAKE with the Transmission Protocol (e.g. UDP)
+
+    git clone --recursive https://github.com/S3ler/linux-mqtt-sn-gateway.git
+    cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DTRANSMISSION_PROTOCOL=UDP
+    
+done.
+
+## Getting started ARM (RPI & LoRa)
+When running or developing the gateway with LoRa you need additional Hardware.
+For testing you need Hardware for a client device (see [test-mqtt-sn-gateway - Serial Lora Client](TODO)).
+
+### Hardware
+We implement the LoRa linux-mqtt-sn-gateway on a Raspberry Pi.
+We develop, test and run out gateway with the following hardware:
+ * [Raspberry Pi 3](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/)
+ * [Dragino Lora/GPS HAT 868 Mhz](http://wiki.dragino.com/index.php?title=Lora/GPS_HAT)
+ 
+TODO: Describe Soldering of Pins of the Dragino Lora/GPS HAT 868 Mhz
+TODO: Add a Photo
+
+### Software & Configuration
+Unfortunately there is a problem ...
+TODO describe the problem with SPI in the never versions
+TODO enabling SPI?
+
+### Running
+Get a pre-built binary from [here](TODO).
+Or obtain them by wget:
+
+    wget TODO
+    untar TODO
+    
+    
+### Development
+After you got your [hardware](TODO) and [configured your RPI](TODO)
+The easiest way to get started is to work on a Raspberry Pi directly.
+At the moment we do not configure cmake for cross-compilation.
+
+You need a least CMake Version 3.0 for the project. Maybe you need to compile CMake on the Raspberry Pi before starting development.
+
+The other steps are the same as for x86:
+Clone the repository and initialize CMAKE with the Transmission Protocol (e.g. LoRa)
+
+    git clone --recursive https://github.com/S3ler/linux-mqtt-sn-gateway.git
+    cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DTRANSMISSION_PROTOCOL=LORA
+    
+done. Happy coding.
 
 ## State of Project
 Unfortunately we do not support all features defined in the [MQTT-SN Standard](http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf).
