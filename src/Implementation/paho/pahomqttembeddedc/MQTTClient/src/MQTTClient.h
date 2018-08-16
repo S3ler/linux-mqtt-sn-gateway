@@ -228,6 +228,11 @@ private:
         FP<void, MessageData&> fp;
     } messageHandlers[MAX_MESSAGE_HANDLERS];      // Message handlers are indexed by subscription topic
 
+    struct TopicFilters{
+        char topicName[255];
+    } topicFilters[MAX_MESSAGE_HANDLERS];
+
+
     FP<void, MessageData&> defaultMessageHandler;
 
     bool isconnected;
@@ -753,7 +758,12 @@ int MQTT::Client<Network, Timer, MAX_MQTT_PACKET_SIZE, MAX_MESSAGE_HANDLERS>::su
             {
                 if (messageHandlers[i].topicFilter == 0)
                 {
-                    messageHandlers[i].topicFilter = topicFilter;
+                    // CHANGE - START Gabriel Nikol
+                    if(strlen(topicFilter)<255-1){
+                        strcpy(topicFilters[i].topicName, topicFilter);
+                    }
+                    // CHANGE - END Gabriel Nikol
+                    messageHandlers[i].topicFilter = topicFilters[i].topicName;
                     messageHandlers[i].fp.attach(messageHandler);
                     rc = 0;
                     break;
