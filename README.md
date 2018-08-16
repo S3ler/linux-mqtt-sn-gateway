@@ -1,6 +1,7 @@
 # linux-mqtt-sn-gateway
 MQTT-SN gateway for linux based operating systems.
-It is a aggregating Gateway implementation.
+Unlike most other transparent MQTT-SN Gateway implementations it is a aggregating Gateway.
+From the beginning it is designed for bare-metal environments without a heap.
 
 It glues the [core-mqtt-sn-gateway](https://github.com/S3ler/core-mqtt-sn-gateway) together with [transmission technology implementations](https://github.com/S3ler/linux-mqtt-sn-gateway/tree/master/src/Implementation), [MQTT-Client](https://github.com/S3ler/linux-mqtt-sn-gateway/tree/master/src/Implementation/paho) and the [core component cmplementations](https://github.com/S3ler/linux-mqtt-sn-gateway/tree/master/src/Implementation) (LinuxGateway, LinuxLogger, LinuxPersistent, LinuxSystem).
 
