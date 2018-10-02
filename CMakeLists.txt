@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.6)
 project(linux-mqtt-sn-gateway)
 
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
 set(CMAKE_CXX_STANDARD 14)
 
 set(BUILD_BLE OFF)
@@ -15,6 +17,8 @@ if(${BUILD_LORA})
 add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_RF95)
 endif(${BUILD_LORA})
 add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_UDP)
+
+#add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_SERIAL)
 
 include_directories(src/core-mqtt-sn-gateway/src)
 
