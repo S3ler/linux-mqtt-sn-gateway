@@ -82,7 +82,8 @@ Clone the repository and initialize CMAKE with the Transmission Protocol (e.g. U
 
     git clone --recursive https://github.com/S3ler/linux-mqtt-sn-gateway.git
     cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DTRANSMISSION_PROTOCOL=UDP
-    
+    make linux-mqtt-sn-gateway
+
 done.
 
 For testing see the [test-mqtt-sn-gateway](https://github.com/S3ler/test-mqtt-sn-gateway) project.
@@ -97,6 +98,7 @@ Clone the repository and initialize CMAKE with the Transmission Protocol (e.g. U
 
     git clone --recursive https://github.com/S3ler/linux-mqtt-sn-gateway.git
     cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DTRANSMISSION_PROTOCOL=UDP
+    make linux-mqtt-sn-gateway
     
 done.
 
@@ -138,7 +140,8 @@ Clone the repository and initialize CMAKE with the Transmission Protocol (e.g. L
 
     git clone --recursive https://github.com/S3ler/linux-mqtt-sn-gateway.git
     cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DTRANSMISSION_PROTOCOL=LORA
-    
+    make linux-mqtt-sn-gateway
+
 done. Happy coding.
 
 ## State of Project
