@@ -7,11 +7,12 @@
 
 
 #include <SocketInterface.h>
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-#include<arpa/inet.h>
-#include<sys/socket.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/time.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
 #include <netdb.h>
@@ -19,12 +20,12 @@
 
 #define BUFLEN 255    //Max length of buffer
 #define PORT 8888    //The port on which to listen for incoming data
+struct timeval;
 
 class LinuxUdpSocket : public SocketInterface {
 public:
 
     struct sockaddr_in udp_socket_address, si_other;
-
     int udp_socket, i, recv_len;
     socklen_t slen = sizeof(si_other);
     char buf[BUFLEN];

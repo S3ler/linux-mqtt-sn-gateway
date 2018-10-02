@@ -9,6 +9,7 @@
 #include <LoggerInterface.h>
 
 #ifndef Arduino_h
+#include<stdio.h>
 #if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
 #include <RasPi.h>
 #elif defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_RF95)

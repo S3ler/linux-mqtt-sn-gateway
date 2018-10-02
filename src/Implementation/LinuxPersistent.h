@@ -8,6 +8,11 @@
 
 #include <PersistentInterface.h>
 #include <SD.h>
+#include <iostream>
+#include <cstring>
+#include <cstdlib>
+
+
 
 
 struct entry_mqtt_subscription{

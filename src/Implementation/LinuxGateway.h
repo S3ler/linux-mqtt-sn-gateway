@@ -9,7 +9,7 @@
 #include <Gateway.h>
 #include <paho/PahoMqttMessageHandler.h>
 #include <atomic>
-#include <Serial/LinuxSerialSocket.h>
+//TODO #include <Serial/LinuxSerialSocket.h>
 #include "Udp/LinuxUdpSocket.h"
 #include "LinuxPersistent.h"
 #include "LinuxLogger.h"
