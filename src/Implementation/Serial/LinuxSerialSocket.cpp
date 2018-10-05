@@ -2,9 +2,7 @@
 // Created by bele on 03.01.18.
 //
 
-#include <climits>
 #include "LinuxSerialSocket.h"
-
 
 
 bool LinuxSerialSocket::begin() {
@@ -16,10 +14,8 @@ bool LinuxSerialSocket::begin() {
     }
 
     memset(&this->broadcastAddress, 0x0, sizeof(device_address));
-    this->broadcastAddress.bytes[0] = BROADCAST_ADDRESS;
 
     memset(&this->ownAddress, 0x0, sizeof(device_address));
-    this->ownAddress.bytes[0] = OWN_ADDRESS;
 
     if (!initSerialPort()) {
         return false;
@@ -28,6 +24,11 @@ bool LinuxSerialSocket::begin() {
     if (!resetController()) {
         return false;
     }
+
+    if (!updateConfiguration()) {
+        return false;
+    }
+
     this->mqttSnMessageHandler->notify_socket_connected();
     return true;
 }
@@ -49,7 +50,7 @@ device_address *LinuxSerialSocket::getAddress() {
 }
 
 uint8_t LinuxSerialSocket::getMaximumMessageLength() {
-    return MAX_MSG_LENGTH;
+    return (uint8_t) maximumMessageLength;
 }
 
 bool LinuxSerialSocket::send(device_address *destination, uint8_t *bytes, uint16_t bytes_len) {
@@ -71,7 +72,7 @@ bool LinuxSerialSocket::loop() {
     if (fd < 0) {
         return false;
     }
-    if(fd > 0){
+    if (fd > 0) {
 
         write(fd, "RECEIVE\n", 8);
         waitForOkSendAddress();
@@ -164,6 +165,350 @@ bool LinuxSerialSocket::resetController() {
     return waitForOKIdle();
 }
 
+bool LinuxSerialSocket::updateConfiguration() {
+    write(fd, "CONFIGURATION\n", 14);
+
+    // STATUS
+    {
+        char toCompare[] = "OK SEND_STATUS\n";
+        if (!waitFor(toCompare)) {
+            return false;
+        }
+
+        if (!readStatus()) {
+            return false;
+        }
+    }
+
+    // OWN ADDRESS
+    {
+        char toCompare[] = "OK SEND_OWN_ADDRESS\n";
+        if (!waitFor(toCompare)) {
+            return false;
+        }
+
+        if (!readOwnAddress()) {
+            return false;
+        }
+    }
+
+    // BROADCAST ADDRESS
+    {
+        char toCompare[] = "OK SEND_BROADCAST_ADDRESS\n";
+        if (!waitFor(toCompare)) {
+            return false;
+        }
+        if (!readBroadcastAddress()) {
+            return false;
+        }
+    }
+
+    // MAXIMUM MESSAGE LENGTH
+    {
+        char toCompare[] = "OK SEND_MAXIMUM_MESSAGE_LENGTH\n";
+        if (!waitFor(toCompare)) {
+            return false;
+        }
+        if (!readMaximumMessageLength()) {
+            return false;
+        }
+        // parse maximum message length
+    }
+
+    // SERIAL BUFFER SIZE
+    {
+        char toCompare[] = "OK SEND_SERIAL_BUFFER_SIZE\n";
+        if (!waitFor(toCompare)) {
+            return false;
+        }
+        if (!readSerialBufferSize()) {
+            return false;
+        }
+        // parse serial buffer size
+    }
+
+    // wait for
+    // "OK IDLE\n"
+    return waitForOKIdle();
+}
+
+
+bool LinuxSerialSocket::readStatus() {
+
+    char buffer[1024];
+    char *buffer_p = buffer;
+    uint16_t buffer_read = 0;
+    memset(buffer, 0x0, sizeof(buffer));
+
+    // parse status
+    // TODO remove while(true) loop
+    while (true) {
+        char c;
+        ssize_t n = read(fd, &c, 1);
+        buffer[buffer_read++] = c;
+        if (c == '\n') {
+            break;
+        }
+        // TODO overflow
+    }
+
+    char *token = strsep(&buffer_p, " ");
+    if (token == NULL) {
+        status = ERROR;
+        return false;
+    }
+    if (memcmp(token, "STATUS", strlen("STATUS")) != 0) {
+        status = ERROR;
+        return false;
+    }
+
+    memset(&from_address, 0x0, sizeof(device_address));
+    uint16_t destination_address_length = 0;
+
+    if ((token = strsep(&buffer_p, " ")) != NULL) {
+        uint8_t status;
+        if (memcmp(token, "STARTING", strlen("STARTING")) == 0) {
+            status = STARTING;
+        } else if (memcmp(token, "IDLE", strlen("IDLE")) == 0) {
+            status = IDLE;
+        } else if (memcmp(token, "SEND", strlen("SEND")) == 0) {
+            status = SEND;
+        } else if (memcmp(token, "RECEIVE", strlen("RECEIVE")) == 0) {
+            status = RECEIVE;
+        } else if (memcmp(token, "CONFIGURATION", strlen("CONFIGURATION")) == 0) {
+            status = CONFIGURATION;
+        } else if (memcmp(token, "PARSE_FAILURE", strlen("PARSE_FAILURE")) == 0) {
+            status = PARSE_FAILURE;
+        } else if (memcmp(token, "ERROR", strlen("ERROR")) == 0) {
+            status = ERROR;
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+bool LinuxSerialSocket::readOwnAddress() {
+
+    char buffer[1024];
+    char *buffer_p = buffer;
+    uint16_t buffer_read = 0;
+    memset(buffer, 0x0, sizeof(buffer));
+
+    // parse own address
+    // accept N/A => 0.0.0.0.0
+    // TODO remove while(true) loop
+    while (true) {
+        char c;
+        ssize_t n = read(fd, &c, 1);
+        buffer[buffer_read++] = c;
+        if (c == '\n') {
+            break;
+        }
+        // TODO overflow
+    }
+
+    char *token = strsep(&buffer_p, " ");
+    if (token == NULL) {
+        memset(&ownAddress, 0x0, sizeof(device_address));
+        return false;
+    }
+
+    if (memcmp(token, "OWN_ADDRESS", strlen("OWN_ADDRESS")) != 0) {
+        memset(&ownAddress, 0x0, sizeof(device_address));
+        return false;
+    }
+
+    // check if address == N/A
+    memset(&ownAddress, 0x0, sizeof(device_address));
+    uint16_t own_address_length = 0;
+
+    while ((token = strsep(&buffer_p, " ")) != NULL) {
+        long int number = 0;
+        if (memcmp(token, "N/A", strlen("N/A")) == 0) {
+            memset(&ownAddress, 0x0, sizeof(device_address));
+            return false;
+        }
+        if (!parseLong(token, &number)) {
+            memset(&ownAddress, 0x0, sizeof(device_address));
+            return false;
+        }
+
+        if (number > UINT8_MAX || number < 0) {
+            memset(&ownAddress, 0x0, sizeof(device_address));
+            return false;
+        }
+
+        if (own_address_length + 1 > sizeof(device_address)) {
+            memset(&ownAddress, 0x0, sizeof(device_address));
+            return false;
+        }
+        ownAddress.bytes[own_address_length++] = (uint8_t) number;
+    }
+    if (own_address_length != sizeof(device_address)) {
+        memset(&from_address, 0x0, sizeof(device_address));
+        return false;
+    }
+    return true;
+}
+
+
+bool LinuxSerialSocket::readBroadcastAddress() {
+
+    char buffer[1024];
+    char *buffer_p = buffer;
+    uint16_t buffer_read = 0;
+    memset(buffer, 0x0, sizeof(buffer));
+
+    // parse broadcast address
+    // accept N/A => 0.0.0.0.0
+    // TODO remove while(true) loop
+    while (true) {
+        char c;
+        ssize_t n = read(fd, &c, 1);
+        buffer[buffer_read++] = c;
+        if (c == '\n') {
+            break;
+        }
+        // TODO overflow
+    }
+
+    char *token = strsep(&buffer_p, " ");
+    if (token == NULL) {
+        memset(&broadcastAddress, 0x0, sizeof(device_address));
+        return false;
+    }
+
+    if (memcmp(token, "BROADCAST_ADDRESS", strlen("BROADCAST_ADDRESS")) != 0) {
+        memset(&broadcastAddress, 0x0, sizeof(device_address));
+        return false;
+    }
+
+    memset(&broadcastAddress, 0x0, sizeof(device_address));
+    uint16_t broadcast_address_length = 0;
+
+    while ((token = strsep(&buffer_p, " ")) != NULL) {
+        long int number = 0;
+        if (memcmp(token, "N/A", strlen("N/A")) == 0) {
+            // accept N/A => nullptr
+            broadcast_address_length = sizeof(device_address);
+            memset(&broadcastAddress, 0x0, sizeof(device_address));
+            break;
+        }
+        if (!parseLong(token, &number)) {
+            memset(&broadcastAddress, 0x0, sizeof(device_address));
+            return false;
+        }
+
+        if (number > UINT8_MAX || number < 0) {
+            memset(&broadcastAddress, 0x0, sizeof(device_address));
+            return false;
+        }
+
+        if (broadcast_address_length + 1 > sizeof(device_address)) {
+            memset(&broadcastAddress, 0x0, sizeof(device_address));
+            return false;
+        }
+        broadcastAddress.bytes[broadcast_address_length++] = (uint8_t) number;
+    }
+    if (broadcast_address_length != sizeof(device_address)) {
+        memset(&broadcastAddress, 0x0, sizeof(device_address));
+        return false;
+    }
+    return true;
+}
+
+
+bool LinuxSerialSocket::readMaximumMessageLength() {
+
+    char buffer[1024];
+    char *buffer_p = buffer;
+    uint16_t buffer_read = 0;
+    memset(buffer, 0x0, sizeof(buffer));
+
+    // TODO remove while(true) loop
+    while (true) {
+        char c;
+        ssize_t n = read(fd, &c, 1);
+        buffer[buffer_read++] = c;
+        if (c == '\n') {
+            break;
+        }
+        // TODO overflow
+    }
+
+    char *token = strsep(&buffer_p, " ");
+    if (token == NULL) {
+        maximumMessageLength = 0;
+        return false;
+    }
+    if (memcmp(token, "MAXIMUM_MESSAGE_LENGTH", strlen("MAXIMUM_MESSAGE_LENGTH")) != 0) {
+        maximumMessageLength = 0;
+        return false;
+    }
+
+    long int number = 0;
+    while ((token = strsep(&buffer_p, " ")) != NULL) {
+        if (!parseLong(token, &number)) {
+            maximumMessageLength = 0;
+            return false;
+        }
+
+        if (number > UINT8_MAX || number < 0) {
+            maximumMessageLength = 0;
+            return false;
+        }
+    }
+    maximumMessageLength = (uint16_t) number;
+    return true;
+}
+
+bool LinuxSerialSocket::readSerialBufferSize() {
+
+    char buffer[1024];
+    char *buffer_p = buffer;
+    uint16_t buffer_read = 0;
+    memset(buffer, 0x0, sizeof(buffer));
+
+    // TODO remove while(true) loop
+    while (true) {
+        char c;
+        ssize_t n = read(fd, &c, 1);
+        buffer[buffer_read++] = c;
+        if (c == '\n') {
+            break;
+        }
+        // TODO overflow
+    }
+
+    char *token = strsep(&buffer_p, " ");
+    if (token == NULL) {
+        serialBufferSize = 0;
+        return false;
+    }
+    if (memcmp(token, "SERIAL_BUFFER_SIZE", strlen("SERIAL_BUFFER_SIZE")) != 0) {
+        serialBufferSize = 0;
+        return false;
+    }
+
+    long int number = 0;
+    while ((token = strsep(&buffer_p, " ")) != NULL) {
+        if (!parseLong(token, &number)) {
+            serialBufferSize = 0;
+            return false;
+        }
+
+        if (number > UINT8_MAX || number < 0) {
+            serialBufferSize = 0;
+            return false;
+        }
+    }
+    serialBufferSize = (uint16_t) number;
+    return true;
+}
+
+
 bool LinuxSerialSocket::waitForOKIdle() {
     char toCompare[] = "OK IDLE\n";
     return waitFor(toCompare);
@@ -196,7 +541,7 @@ void LinuxSerialSocket::waitForOkAwaitAddress() {
     waitFor(toCompare);
 }
 
-void LinuxSerialSocket::sendAddress(device_address* address) {
+void LinuxSerialSocket::sendAddress(device_address *address) {
     write(fd, "ADDRESS", 7);
     for (uint16_t i = 0; i < sizeof(device_address); i++) {
         write(fd, " ", 1);
@@ -212,7 +557,7 @@ void LinuxSerialSocket::waitForOkAwaitData() {
     waitFor(toCompare);
 }
 
-void LinuxSerialSocket::sendData( uint8_t *buf, uint8_t len) {
+void LinuxSerialSocket::sendData(uint8_t *buf, uint8_t len) {
     write(fd, "DATA", 4);
     for (uint16_t i = 0; i < len; i++) {
         write(fd, " ", 1);
@@ -234,7 +579,7 @@ void LinuxSerialSocket::waitForOkSendAddress() {
 
 void LinuxSerialSocket::readSendAddress() {
     char buffer[1024];
-    char* buffer_p = buffer;
+    char *buffer_p = buffer;
     uint16_t buffer_read = 0;
     memset(buffer, 0x0, sizeof(buffer));
 
@@ -294,7 +639,7 @@ void LinuxSerialSocket::waitForOkSendData() {
 void LinuxSerialSocket::readData() {
 
     char buffer[1024];
-    char* buffer_p  = buffer;
+    char *buffer_p = buffer;
     uint16_t buffer_read = 0;
     memset(buffer, 0x0, sizeof(buffer));
 
@@ -355,3 +700,5 @@ bool LinuxSerialSocket::parseLong(const char *str, long *val) {
 
     return rc;
 }
+
+
