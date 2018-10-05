@@ -9,11 +9,15 @@
 #include <Gateway.h>
 #include <paho/PahoMqttMessageHandler.h>
 #include <atomic>
-//TODO #include <Serial/LinuxSerialSocket.h>
-#include "Udp/LinuxUdpSocket.h"
 #include "LinuxPersistent.h"
 #include "LinuxLogger.h"
 #include "LinuxSystem.h"
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_UDP)
+#include "Udp/LinuxUdpSocket.h"
+#endif
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_SERIAL)
+#include <Serial/LinuxSerialSocket.h>
+#endif
 #if defined(GATEWAY_TRANSMISSION_PROTOCOL_BLE)
 #include <Ble/BLESocket.h>
 #endif
