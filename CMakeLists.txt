@@ -46,12 +46,14 @@ set(IMPLEMENTATIONL_FILES
         src/Implementation/LinuxGateway.h)
 
 if(${TRANSMISSION_PROTOCOL} STREQUAL "UDP")
-set(IMPLEMENTATIONL_FILES ${IMPLEMENTATIONL_FILES}
+    include_directories(src/Implementation/Udp)
+    set(IMPLEMENTATIONL_FILES ${IMPLEMENTATIONL_FILES}
         src/Implementation/Udp/LinuxUdpSocket.cpp
         src/Implementation/Udp/LinuxUdpSocket.h)
 endif()
 
 if(${TRANSMISSION_PROTOCOL} STREQUAL "SERIAL")
+    include_directories(src/Implementation/Serial)
     set(IMPLEMENTATIONL_FILES ${IMPLEMENTATIONL_FILES}
         src/Implementation/Serial/LinuxSerialSocket.cpp
         src/Implementation/Serial/LinuxSerialSocket.h)
