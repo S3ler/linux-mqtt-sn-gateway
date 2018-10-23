@@ -33,6 +33,9 @@
 #include <RHReliableDatagram.h>
 #include <Arduino.h>
 #endif
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_SINGLE_TCP)
+#include "SingleTcpSocket.h"
+#endif
 
 class LinuxGateway : public Gateway {
 #if defined(GATEWAY_TRANSMISSION_PROTOCOL_UDP)
@@ -53,6 +56,8 @@ class LinuxGateway : public Gateway {
     RHReliableDatagram manager;
     RF95Socket mqttsnSocket;
     SerialLinux Serial;
+#elif defined(GATEWAY_TRANSMISSION_PROTOCOL_SINGLE_TCP)
+    SingleTcpSocket mqttsnSocket;
 #else
 #error "No gateway transmission protocol defined."
 #endif
