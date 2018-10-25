@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.6)
 project(linux-mqtt-sn-gateway)
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -12,6 +12,10 @@ if (${TRANSMISSION_PROTOCOL} STREQUAL "UDP")
 elseif (${TRANSMISSION_PROTOCOL} STREQUAL "SERIAL")
     MESSAGE("Transmission Protocol: Serial")
     add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_SERIAL)
+    set(BUILD_LINUX_SERIAL ON)
+elseif (${TRANSMISSION_PROTOCOL} STREQUAL "TELNET")
+    MESSAGE("Transmission Protocol: Telnet")
+    add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_TELNET)
     set(BUILD_LINUX_SERIAL ON)
 elseif (${TRANSMISSION_PROTOCOL} STREQUAL "RPI_LORA")
     MESSAGE("Transmission Protocol: Raspberry Pi LoRa")
@@ -61,6 +65,13 @@ if (${TRANSMISSION_PROTOCOL} STREQUAL "SERIAL")
     set(IMPLEMENTATIONL_FILES ${IMPLEMENTATIONL_FILES}
             src/Implementation/Serial/LinuxSerialSocket.cpp
             src/Implementation/Serial/LinuxSerialSocket.h)
+endif ()
+
+if (${TRANSMISSION_PROTOCOL} STREQUAL "TELNET")
+    include_directories(src/Implementation/Telnet)
+    set(IMPLEMENTATIONL_FILES ${IMPLEMENTATIONL_FILES}
+            src/Implementation/Telnet/LinuxTelnetSocket.cpp
+            src/Implementation/Telnet/LinuxTelnetSocket.h)
 endif ()
 
 if (${TRANSMISSION_PROTOCOL} STREQUAL "SINGLE_TCP")
