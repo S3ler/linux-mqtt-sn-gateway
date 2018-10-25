@@ -9,6 +9,7 @@ It glues the [core-mqtt-sn-gateway](https://github.com/S3ler/core-mqtt-sn-gatewa
 At the moment we support:
  * x86
  * ARM (especially Raspberry Pi)
+ * [OpenWrt (Dragino LoRa Gateway)](http://www.dragino.com/products/lora/item/119-lg01-s.html)
  
 ## Supported Transmission Technologies
 For x86 we only support Ethernet (UDP & TCP) and WiFi (UDP & TCP).
@@ -17,16 +18,15 @@ See the  Transmission Technology to Architecture Matrix.
 ### Transmission Technology to Architecture Matrix
 |   	| UDP  	| TCP  	| Ethernet  	| WiFi  	| ZigBee  	| LoRa  	| BLE  	|
 |---	|---	|---	|---	|---	|---	|---	|---	|
-| Linux  	| &#x2705;  	| &#x274E;  	| &#x2705;  	| &#x2705;  	| &#x274C;  	| &#x274C;  	| &#x274C;  	|
+| Linux  	| &#x2705;  	| &#x274E;  	| &#x2705;  	| &#x2705;  	| &#x274E;  	| &#x274E;  	| &#x274E;  	|
 | Raspberry Pi  	| &#x2705;  	| &#x274E;  	| &#x2705;  	| &#x2705;  	| &#x274E;\*  	| &#x2705;\*  	| &#x274E;  	|
+| [OpenWrt (Dragino LoRa Gateway)](http://www.dragino.com/products/lora/item/119-lg01-s.html)  	| &#x2705;  	| &#x274E;  	| &#x2705;  	| &#x2705;  	| &#x274E;\*  	| &#x2705;  	| &#x274E;  	|
 
 \* needs additional transmission hardware
 
 ##### Legend: 
 * &#x2705; implemented and tested
 * &#x274E; not implemented yet
-* &#x274C; will not be implemented
-
 
 
 ## Getting started UDP (x86 & ARM) - running
