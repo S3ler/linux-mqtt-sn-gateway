@@ -14,6 +14,7 @@ At the moment we support:
 ## Supported Transmission Technologies
 For x86 we only support Ethernet (UDP & TCP) and WiFi (UDP & TCP).
 On ARM (Raspberry Pi) there is additionally ZigBee, LoRa and BLE.
+Additionally we support OpenWrt (Dragino LoRa Gateway) with LoRa.
 See the  Transmission Technology to Architecture Matrix.
 ### Transmission Technology to Architecture Matrix
 |   	| UDP  	| TCP  	| Ethernet  	| WiFi  	| ZigBee  	| LoRa  	| BLE  	|
