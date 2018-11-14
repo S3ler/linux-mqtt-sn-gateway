@@ -10,11 +10,10 @@
 #include <mutex>
 #include <errno.h>
 #include <fcntl.h>
-#include <string.h>
+#include <string>
 #include <termios.h>
 #include <climits>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
