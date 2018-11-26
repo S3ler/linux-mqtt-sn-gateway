@@ -107,19 +107,35 @@ done.
 When running or developing the gateway with LoRa you need additional Hardware.
 For testing you need Hardware for a client device (see [test-mqtt-sn-gateway - Serial Lora Client](TODO)).
 
+Clone the repository and initialize CMAKE with the platform, Transmission Protocol (RPI_LoRa) and address
+
+    git clone --recursive https://github.com/S3ler/linux-mqtt-sn-gateway.git
+    cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DTRANSMISSION_PROTOCOL=RPI_LORA -DOWN_ADDRESS=1
+    make linux-mqtt-sn-gateway
+    
+done.
+
 ### Hardware
-We implement the LoRa linux-mqtt-sn-gateway on a Raspberry Pi.
+We implement the LoRa linux-mqtt-sn-gateway on a Raspberry Pi 3.
 We develop, test and run out gateway with the following hardware:
  * [Raspberry Pi 3](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/)
  * [Dragino Lora/GPS HAT 868 Mhz](http://wiki.dragino.com/index.php?title=Lora/GPS_HAT)
  
-TODO: Describe Soldering of Pins of the Dragino Lora/GPS HAT 868 Mhz
-TODO: Add a Photo
+Connect Pin 22 to Pin 24 on the Dragino Lora/GPS HAT.
+E.g. by soldering stackable 0.1" (2.54mm) female header and connect them by a jumper.
+For more information see:
+
+Example4 -- http://wiki.dragino.com/index.php?title=Lora/GPS_HAT 
+![Connect Pin 22 to Pin 24 on the Dragino Lora/GPS HAT](http://wiki.dragino.com/images/a/a4/Hat_for_LCRG.png)
 
 ### Software & Configuration
-Unfortunately there is a problem ...
-TODO describe the problem with SPI in the never versions
-TODO enabling SPI?
+Unfortunately there is a problem with newer Raspbian version after Raspbian Jessie.
+A change in the SPI API used by wiringPi used by RadioHead (used by the linux-mqtt-sn-gateway) creates problems with the initialization of the LoRa chip.
+We tested the linux-mqtt-sn-gateway with [Raspbian Jessie (2017-07-05)](https://downloads.raspberrypi.org/raspbian/images/raspbian-2017-07-05/).
+
+Do not forget to enable SPI on the Raspberry Pi with
+    
+    sudo raspi-config
 
 ### Running
 Get a pre-built binary from [here](TODO).
