@@ -1,13 +1,13 @@
 [submodule "src/core-mqtt-sn-gateway"]
 	path = src/core-mqtt-sn-gateway
-	url = https://github.com/S3ler/core-mqtt-sn-gateway.git
+	url = https://github.com/jkoz/core-mqtt-sn-gateway.git
 [submodule "src/arduino-linux-abstraction"]
 	path = src/arduino-linux-abstraction
-	url = https://github.com/S3ler/arduino-linux-abstraction.git
+	url = https://github.com/jkoz/arduino-linux-abstraction.git
 [submodule "src/Implementation/Ble/SimpleBluetoothLowEnergySocket"]
 	path = src/Implementation/Ble/SimpleBluetoothLowEnergySocket
 	url = https://github.com/S3ler/SimpleBluetoothLowEnergySocket.git
 	branch = master
 [submodule "src/Implementation/mqtt-sn-sockets"]
 	path = src/Implementation/mqtt-sn-sockets
-	url = https://github.com/S3ler/mqtt-sn-sockets.git
+	url = https://github.com/jkoz/mqtt-sn-sockets.git
