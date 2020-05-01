@@ -13,6 +13,8 @@ bool LinuxSerialSocket::begin() {
         return false;
     }
 
+    this->logger->log("Starting serial socket", 2);
+
     memset(&this->broadcastAddress, 0x0, sizeof(device_address));
 
     memset(&this->ownAddress, 0x0, sizeof(device_address));
