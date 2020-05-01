@@ -96,6 +96,7 @@ public:
 
     void stop_loop();
 
+    LinuxLogger& getLogger() { return logger }
 };
 
 

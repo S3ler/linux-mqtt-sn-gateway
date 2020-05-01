@@ -36,10 +36,11 @@ void setup() {
 #endif
 
     while (!gateway.begin()) {
-        std::cout << "Error starting gateway components" << std::endl;
+        gateway.getLogger().log("Error starting gateway components", 0);
         exit(1);
     }
-    std::cout << "Gateway ready" << std::endl;
+
+    gateway.getLogger().log("Gateway ready", 2);
 }
 
 int main(int argc, char *argv[]) {
