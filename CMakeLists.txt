@@ -176,6 +176,11 @@ if (${BUILD_LINUX_RH_SERIAL})
     if (NOT ${BCM2835_FOUND})
        message(FATAL_ERROR "bcm2835 library not installed. See https://www.airspayce.com/mikem/bcm2835")
     endif (NOT ${BCM2835_FOUND})
+    # This is a total hack, but to get RadioHead to compile for RaspberryPi with HardwareSerial, but NOT
+    # include the serial simulator twice, we need to pre-define the simulator_h header test.
+    add_definitions(-D__POSIX__)
+    add_definitions(-Dsimulator_h)
+    # end of hack
     target_compile_definitions(lib-linux-mqtt-sn-gateway PRIVATE -DRASPBERRY_PI -DBCM2835_NO_DELAY_COMPATIBILITY)
     add_subdirectory(src/Implementation/mqtt-sn-sockets)
     include_directories(src/Implementation/mqtt-sn-sockets)

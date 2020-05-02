@@ -7,9 +7,9 @@
 #ifndef TEST_MQTT_SN_GATEWAY_LINUXSERIALSOCKET_H
 #define TEST_MQTT_SN_GATEWAY_LINUXSERIALSOCKET_H
 
-#include <HardwareSerial.h>
 #include <RH_Serial.h>
 #include <RHDatagramSocket.h>
+#include <HardwareSerial.h>
 
 #include <string>
 

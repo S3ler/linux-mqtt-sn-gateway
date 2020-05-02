@@ -10,7 +10,7 @@
 
 #ifndef Arduino_h
 #include<stdio.h>
-#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24) || defined(GATEWAY_TRANSMISSION_PROTOCOL_RH_SERIAL)
 #include <RasPi.h>
 #elif defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_RF95)
 #include <wiringPi.h>
@@ -25,7 +25,7 @@ private:
     uint8_t current_log_lvl = 2;
     uint8_t last_started_log_lvl = UINT8_MAX;
 
-#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24) || defined(GATEWAY_TRANSMISSION_PROTOCOL_RH_SERIAL)
     // already as extern Serial in simulator.h
 #elif defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_RF95)
     SerialLinux Serial;

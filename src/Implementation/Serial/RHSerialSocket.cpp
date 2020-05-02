@@ -1,6 +1,6 @@
 #include "RHSerialSocket.h"
-
 #include <RHReliableDatagram.h>
+
 
 RHSerialSocket::RHSerialSocket() : ownAddress{0x11},
                                    portname{"/dev/tty"},

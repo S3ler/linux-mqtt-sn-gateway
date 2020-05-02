@@ -10,7 +10,9 @@ LinuxSystem::LinuxSystem() { }
 #else
 #ifndef Arduino_h
 LinuxSystem::LinuxSystem() {
-    resetTimerValue();
+//    Code in this module does not depend on the ability to reset the timer, and
+//    resetTimerValue() is not available on Raspberry Pi, so don't call it.
+//    resetTimerValue();
 }
 #endif
 #endif
