@@ -5,7 +5,8 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 CTestTestfile.cmake
-
+.vscode/*
+.history/*
 cmake-build-debug/*
 *~
 .idea/*
