@@ -18,6 +18,9 @@
 #if defined(GATEWAY_TRANSMISSION_PROTOCOL_SERIAL)
 #include <Serial/LinuxSerialSocket.h>
 #endif
+#if defined(GATEWAY_TRANSMISSION_PROTOCOL_RH_SERIAL)
+#include <Serial/RHSerialSocket.h>
+#endif
 #if defined(GATEWAY_TRANSMISSION_PROTOCOL_TELNET)
 #include <Telnet/LinuxTelnetSocket.h>
 #endif
@@ -49,6 +52,8 @@ class LinuxGateway : public Gateway {
     BLESocket mqttsnSocket;
 #elif defined(GATEWAY_TRANSMISSION_PROTOCOL_SERIAL)
     LinuxSerialSocket mqttsnSocket;
+#elif defined(GATEWAY_TRANSMISSION_PROTOCOL_RH_SERIAL)
+    RHSerialSocket mqttsnSocket;
 #elif defined(GATEWAY_TRANSMISSION_PROTOCOL_TELNET)
     LinuxTelnetSocket mqttsnSocket;
 #elif defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
