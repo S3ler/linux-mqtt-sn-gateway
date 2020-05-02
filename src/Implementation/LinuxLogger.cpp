@@ -4,7 +4,10 @@
 
 #include "LinuxLogger.h"
 
+static unsigned long startTime;
+
 bool LinuxLogger::begin() {
+    startTime = millis();
     return true;
 }
 
@@ -21,11 +24,11 @@ void LinuxLogger::log(const char *msg, uint8_t log_lvl) {
         return;
     }
     char millis_buffer[26];
-    sprintf(millis_buffer, "%ld", millis());
+    sprintf(millis_buffer, "%ld", (millis() - startTime));
     Serial.print(millis_buffer);
     Serial.print(": ");
     Serial.print(msg);
-    Serial.print("\n");
+    Serial.print("\r\n");
 }
 
 void LinuxLogger::start_log(char *msg, uint8_t log_lvl) {
@@ -38,11 +41,11 @@ void LinuxLogger::start_log(const char *msg, uint8_t log_lvl) {
         return;
     }
     char millis_buffer[26];
-    sprintf(millis_buffer, "%ld", millis());
+    sprintf(millis_buffer, "%ld", (millis() - startTime));
     Serial.print(millis_buffer);
     Serial.print(": ");
     Serial.print(msg);
-    Serial.print("\n");
+    Serial.print("\r\n");
 }
 
 void LinuxLogger::set_current_log_lvl(uint8_t log_lvl) {
