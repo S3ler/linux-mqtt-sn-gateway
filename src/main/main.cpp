@@ -46,10 +46,22 @@ void setup() {
 int main(int argc, char *argv[]) {
     gateway.setRootPath(dirname(argv[0]));
     setup();
-    gateway.start_loop();
 
-    while(true) {
-        // we need to keep the program alive
+    try {
+        gateway.start_loop();
+
+        while(!gateway.isStopped()) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+
+        gateway.stop_loop();
+        std::cout << "Gracefully exiting program\n";
+        exit(0);
+    }
+    catch (std::exception& ex) {
+        std::cout << "Caught exception at main loop: ";
+        std::cout << ex.what() << std::endl;
+        exit(1);
     }
 }
 

@@ -8,6 +8,9 @@
 
 #include <System.h>
 #include <exception>
+#include <string>
+
+#include "LoggerInterface.h"
 
 #ifndef Arduino_h
 #if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24) || defined(GATEWAY_TRANSMISSION_PROTOCOL_RH_SERIAL)
@@ -26,11 +29,22 @@ private:
     uint32_t heartbeat_period = 10000;
     uint32_t heartbeat_current = 0;
     uint32_t elapsed_current = 0;
+    LoggerInterface* logger = nullptr;
 public:
+
+    class ThreadTerminated : public std::exception {
+        public:
+          ThreadTerminated(const char* msg);
+          const char* what() const throw() override;
+        private:
+          std::string term_msg;
+    };
 
 #ifndef Arduino_h
     LinuxSystem();
 #endif
+
+    void setLogger(LoggerInterface* logger) { this->logger = logger; }
 
     void set_heartbeat(uint32_t period) override;
 

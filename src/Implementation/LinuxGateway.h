@@ -79,7 +79,6 @@ class LinuxGateway : public Gateway {
     LinuxLogger logger;
     LinuxSystem systemImpl;
     LinuxSystem durationSystemImpl;
-
     std::thread thread;
     std::atomic<bool> stopped{false};
 
@@ -100,6 +99,8 @@ public:
     void dispatch_loop();
 
     void stop_loop();
+
+    bool isStopped() { return stopped; }
 
     LinuxLogger& getLogger() { return logger; }
 };
