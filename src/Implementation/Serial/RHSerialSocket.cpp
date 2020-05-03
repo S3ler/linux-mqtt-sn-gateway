@@ -3,8 +3,9 @@
 
 
 RHSerialSocket::RHSerialSocket() : ownAddress{0x11},
-                                   portname{"/dev/ttyS0"},
-                                   baud{38400} {
+                                   portname{"/dev/ttyUSB0"},
+                                   baud{38400},
+                                   reliable{true} {
 }
 
 
