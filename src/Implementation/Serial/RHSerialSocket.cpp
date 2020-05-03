@@ -3,7 +3,7 @@
 
 
 RHSerialSocket::RHSerialSocket() : ownAddress{0x11},
-                                   portname{"/dev/tty"},
+                                   portname{"/dev/ttyS0"},
                                    baud{38400} {
 }
 
