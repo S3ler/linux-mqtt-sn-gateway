@@ -21,3 +21,10 @@ linux-mqtt-sn-gateway.layout
 
 linux-mqtt-sn-gateway
 .vscode
+
+*.PUB
+*.REG
+*.SUB
+*.WIL
+CLIENTS
+
