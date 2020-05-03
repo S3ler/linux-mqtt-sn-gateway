@@ -10,9 +10,7 @@ LinuxSystem::LinuxSystem() { }
 #else
 #ifndef Arduino_h
 LinuxSystem::LinuxSystem() {
-//    Code in this module does not depend on the ability to reset the timer, and
-//    resetTimerValue() is not available on Raspberry Pi, so don't call it.
-//    resetTimerValue();
+    resetTimerValue();
 }
 #endif
 #endif
@@ -45,6 +43,17 @@ void LinuxSystem::sleep(uint32_t duration) {
     delay(duration);
 }
 
+
+LinuxSystem::ThreadTerminated::ThreadTerminated(const char* msg) : term_msg{msg} {
+}
+
+const char* LinuxSystem::ThreadTerminated::what() const throw() {
+    return term_msg.c_str();
+}
+
+
 void LinuxSystem::exit() {
-    throw std::exception();
+    const char* msg = "System code called LinuxSystem::exit(). Terminating Gateway thread";
+    logger->log(msg, 0);
+    throw ThreadTerminated(msg);
 }
