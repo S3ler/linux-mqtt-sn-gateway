@@ -28,7 +28,7 @@ void LinuxLogger::log(const char *msg, uint8_t log_lvl) {
     Serial.print(millis_buffer);
     Serial.print(": ");
     Serial.print(msg);
-    Serial.print("\r\n");
+    Serial.print("\n");
 
     std::cout << std::flush;
 }
@@ -47,7 +47,7 @@ void LinuxLogger::start_log(const char *msg, uint8_t log_lvl) {
     Serial.print(millis_buffer);
     Serial.print(": ");
     Serial.print(msg);
-    Serial.print("\r\n");
+    Serial.print("\n");
 
     std::cout << std::flush;
 }

@@ -50,7 +50,7 @@ public:
     bool loop() override;
 
 private:
-    char *portname = "/dev/ttyS0";
+    char *portname = "/dev/ttyUSB1";
     int fd = -1;
     std::mutex mutex;
 

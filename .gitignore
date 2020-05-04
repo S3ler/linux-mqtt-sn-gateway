@@ -26,5 +26,5 @@ linux-mqtt-sn-gateway
 *.REG
 *.SUB
 *.WIL
-CLIENTS
+
 
