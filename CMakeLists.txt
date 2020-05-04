@@ -176,8 +176,11 @@ if (${BUILD_LINUX_RH_SERIAL})
     if (NOT ${BCM2835_FOUND})
        message(FATAL_ERROR "bcm2835 library not installed. See https://www.airspayce.com/mikem/bcm2835")
     endif (NOT ${BCM2835_FOUND})
-    # This is a total hack, but to get RadioHead to compile for RaspberryPi with HardwareSerial, but NOT
-    # include the serial simulator twice, we need to pre-define the simulator_h header test.
+    # This is a total hack, but we need to use the RadioHeadRpi library vs. the original RadioHead.
+    # When using that library, activating HardwareSerial requires we define __POSIX__.  
+    # However, RadioHeadRpi's RasPi class has its own version of class SerialSimulator, 
+    # so that causes a serial simulator to be compiled twice causing a linker error. 
+    # To prevent this, we need to pre-define the simulator_h header test as well.
     add_definitions(-D__POSIX__)
     add_definitions(-Dsimulator_h)
     # end of hack
