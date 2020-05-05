@@ -20,8 +20,8 @@ bool RHSerialSocket::begin() {
     driver = new RH_Serial(*serialPort);
 
     this->setManager(new RHReliableDatagram(*driver, this->ownAddress));
-    this->manager->setTimeout(400);
-    this->manager->setRetries(5);
+    this->manager->setTimeout(2000);
+    this->manager->setRetries(2);
 
     return RHReliableDatagramSocket::begin();
 }
