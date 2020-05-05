@@ -8,12 +8,12 @@
 #define TEST_MQTT_SN_GATEWAY_LINUXSERIALSOCKET_H
 
 #include <RH_Serial.h>
-#include <RHDatagramSocket.h>
+#include <RHReliableDatagramSocket.h>
 #include <HardwareSerial.h>
 
 #include <string>
 
-class RHSerialSocket : public RHDatagramSocket {
+class RHSerialSocket : public RHReliableDatagramSocket {
 
     public:
        RHSerialSocket();
@@ -30,11 +30,6 @@ class RHSerialSocket : public RHDatagramSocket {
            this->baud = baud;
        }
 
-
-       void setReliable(bool reliable) {
-           this->reliable = reliable;
-       }
-
        void setOwnAddress(uint8_t ownAddress) {
            this->ownAddress = ownAddress;
        }
@@ -43,7 +38,6 @@ class RHSerialSocket : public RHDatagramSocket {
        uint8_t ownAddress;
        std::string portname;
        int baud;
-       bool reliable;
        HardwareSerial* serialPort;
        RH_Serial* driver;
 };

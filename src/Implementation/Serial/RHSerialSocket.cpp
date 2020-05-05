@@ -4,10 +4,8 @@
 
 RHSerialSocket::RHSerialSocket() : ownAddress{0x11},
                                    portname{"/dev/ttyUSB0"},
-                                   baud{38400},
-                                   reliable{true} {
+                                   baud{38400} {
 }
-
 
 
 bool RHSerialSocket::begin() {
@@ -21,14 +19,9 @@ bool RHSerialSocket::begin() {
 
     driver = new RH_Serial(*serialPort);
 
-    if (this->reliable) {
-        manager = new RHReliableDatagram(*driver, this->ownAddress);
-    }
-    else {
-        manager = new RHDatagram(*driver, this->ownAddress);
-    }
+    this->setManager(new RHReliableDatagram(*driver, this->ownAddress));
+    this->manager->setTimeout(400);
+    this->manager->setRetries(5);
 
-    this->setManager(manager);
-
-    return RHDatagramSocket::begin();
+    return RHReliableDatagramSocket::begin();
 }
