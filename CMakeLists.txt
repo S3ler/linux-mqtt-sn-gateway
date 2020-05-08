@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.6)
 project(linux-mqtt-sn-gateway)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "./cmake/modules/")
+
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -17,6 +19,10 @@ elseif (${TRANSMISSION_PROTOCOL} STREQUAL "SERIAL")
     MESSAGE("Transmission Protocol: Serial")
     add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_SERIAL)
     set(BUILD_LINUX_SERIAL ON)
+elseif (${TRANSMISSION_PROTOCOL} STREQUAL "RH_SERIAL")
+    MESSAGE("Transmission Protocol: RH_Serial")
+    add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_RH_SERIAL)
+    set(BUILD_LINUX_RH_SERIAL ON)
 elseif (${TRANSMISSION_PROTOCOL} STREQUAL "TELNET")
     MESSAGE("Transmission Protocol: Telnet")
     add_definitions(-DGATEWAY_TRANSMISSION_PROTOCOL_TELNET)
@@ -76,6 +82,17 @@ if (${TRANSMISSION_PROTOCOL} STREQUAL "SERIAL")
             src/Implementation/Serial/LinuxSerialSocket.cpp
             src/Implementation/Serial/LinuxSerialSocket.h)
 endif ()
+
+
+if (${TRANSMISSION_PROTOCOL} STREQUAL "RH_SERIAL")
+    include_directories(src/Implementation/Serial)
+    include_directories(src/Implementation/mqtt-sn-sockets/RadioHeadRpi)    
+    include_directories(src/Implementation/mqtt-sn-sockets/RadioHeadRpi/RHutil)    
+    set(IMPLEMENTATIONL_FILES ${IMPLEMENTATIONL_FILES}
+            src/Implementation/Serial/RHSerialSocket.cpp
+            src/Implementation/Serial/RHSerialSocket.h)
+endif ()
+
 
 if (${TRANSMISSION_PROTOCOL} STREQUAL "TELNET")
     include_directories(src/Implementation/Telnet)
@@ -137,6 +154,9 @@ if (${BUILD_BLE})
     target_link_libraries(lib-linux-mqtt-sn-gateway libMqttSNBLESocket libgdbus)
 endif (${BUILD_BLE})
 if (${BUILD_RPI_NRF24})
+    if (NOT ${BCM2835_FOUND})
+       message(FATAL_ERROR "bcm2835 library not installed. See https://www.airspayce.com/mikem/bcm2835")
+    endif (NOT ${BCM2835_FOUND})
     #target_compile_definitions(lib-linux-mqtt-sn-gateway PRIVATE -DRH_PLATFORM=RH_PLATFORM_RASPI)
     target_compile_definitions(lib-linux-mqtt-sn-gateway PRIVATE -DRASPBERRY_PI -DBCM2835_NO_DELAY_COMPATIBILITY)
     add_definitions(-DRH_PLATFORM=RH_PLATFORM_RASPI)
@@ -149,6 +169,28 @@ if (${BUILD_RPI_RF95})
     target_compile_definitions(lib-linux-mqtt-sn-gateway PRIVATE -DMODEM_CONFIG_CHOICE=Bw31_25Cr48Sf512)
     target_link_libraries(lib-linux-mqtt-sn-gateway lib-rh96-socket wiringPi)
 endif (${BUILD_RPI_RF95})
+
+
+if (${BUILD_LINUX_RH_SERIAL})
+    find_package(bcm2835)
+    if (NOT ${BCM2835_FOUND})
+       message(FATAL_ERROR "bcm2835 library not installed. See https://www.airspayce.com/mikem/bcm2835")
+    endif (NOT ${BCM2835_FOUND})
+    # This is a total hack, but we need to use the RadioHeadRpi library vs. the original RadioHead.
+    # When using that library, activating HardwareSerial requires we define __POSIX__.  
+    # However, RadioHeadRpi's RasPi class has its own version of class SerialSimulator, 
+    # so that causes a serial simulator to be compiled twice causing a linker error. 
+    # To prevent this, we need to pre-define the simulator_h header test as well.
+    add_definitions(-D__POSIX__)
+    add_definitions(-Dsimulator_h)
+    # end of hack
+    target_compile_definitions(lib-linux-mqtt-sn-gateway PRIVATE -DRASPBERRY_PI -DBCM2835_NO_DELAY_COMPATIBILITY)
+    add_subdirectory(src/Implementation/mqtt-sn-sockets)
+    include_directories(src/Implementation/mqtt-sn-sockets)
+    include_directories(src/Implementation/mqtt-sn-sockets/RadioHeadRpi)
+    include_directories(src/Implementation/mqtt-sn-sockets/RadioHeadRpi/RHutil)
+    target_link_libraries(lib-linux-mqtt-sn-gateway lib-rh-datagram-socket bcm2835)
+endif (${BUILD_LINUX_RH_SERIAL})
 
 
 set(MAIN_FILE

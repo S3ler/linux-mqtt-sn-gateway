@@ -4,6 +4,9 @@
 
 #include "LinuxLogger.h"
 
+#include <iostream>
+#include <ostream>
+
 bool LinuxLogger::begin() {
     return true;
 }
@@ -20,12 +23,14 @@ void LinuxLogger::log(const char *msg, uint8_t log_lvl) {
     if (log_lvl > current_log_lvl) {
         return;
     }
-    Serial.print("\n");
     char millis_buffer[26];
     sprintf(millis_buffer, "%ld", millis());
     Serial.print(millis_buffer);
     Serial.print(": ");
     Serial.print(msg);
+    Serial.print("\n");
+
+    std::cout << std::flush;
 }
 
 void LinuxLogger::start_log(char *msg, uint8_t log_lvl) {
@@ -37,12 +42,14 @@ void LinuxLogger::start_log(const char *msg, uint8_t log_lvl) {
     if (last_started_log_lvl > current_log_lvl) {
         return;
     }
-    Serial.print("\n");
     char millis_buffer[26];
     sprintf(millis_buffer, "%ld", millis());
     Serial.print(millis_buffer);
     Serial.print(": ");
     Serial.print(msg);
+    Serial.print("\n");
+
+    std::cout << std::flush;
 }
 
 void LinuxLogger::set_current_log_lvl(uint8_t log_lvl) {

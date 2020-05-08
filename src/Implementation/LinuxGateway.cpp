@@ -21,7 +21,10 @@
 
 
 bool LinuxGateway::begin() {
+
+    logger.begin();
     logger.start_log("Linux MQTT-SN Gateway version 0.0.1a starting", 1);
+    systemImpl.setLogger(&logger);
 
 #if defined(GATEWAY_TRANSMISSION_PROTOCOL_RASPBERRY_RH_NRF24)
     if(!bcm2835_init()){
@@ -72,6 +75,7 @@ void LinuxGateway::setRootPath( char *rootPath) {
 }
 
 void LinuxGateway::start_loop() {
+    this->stopped = false;
     this->thread = std::thread(&LinuxGateway::dispatch_loop, this);
 }
 
@@ -81,8 +85,15 @@ void LinuxGateway::stop_loop() {
 }
 
 void LinuxGateway::dispatch_loop() {
-    while (!stopped) {
-        this->loop();
+
+    try {
+        while (!stopped) {
+            this->loop();
+        }
+    }
+    catch (LinuxSystem::ThreadTerminated& ex) {
+       logger.log("System requested gateway thread termination. Stopping thread...", 0);
+       this->stopped = true;
     }
 }
 

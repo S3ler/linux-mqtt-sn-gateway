@@ -795,6 +795,8 @@ bool LinuxPersistent::is_topic_known(uint16_t topic_id) {
         }
         entry_number++;
     } while (readChars > 0);
+
+    return false;
 }
 
 bool LinuxPersistent::set_topic_known(uint16_t topic_id, bool known) {

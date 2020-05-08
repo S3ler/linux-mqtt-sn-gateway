@@ -43,6 +43,17 @@ void LinuxSystem::sleep(uint32_t duration) {
     delay(duration);
 }
 
+
+LinuxSystem::ThreadTerminated::ThreadTerminated(const char* msg) : term_msg{msg} {
+}
+
+const char* LinuxSystem::ThreadTerminated::what() const throw() {
+    return term_msg.c_str();
+}
+
+
 void LinuxSystem::exit() {
-    throw std::exception();
+    const char* msg = "System code called LinuxSystem::exit(). Terminating Gateway thread";
+    logger->log(msg, 0);
+    throw ThreadTerminated(msg);
 }

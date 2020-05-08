@@ -94,7 +94,7 @@ bool LinuxSerialSocket::initSerialPort() {
         // error_message ("error %d opening %s: %s", errno, portname, strerror (errno));
         return false;
     }
-    if (set_interface_attribs(fd, B9600, 0) < 0) {  // set speed to 115,200 bps, 8n1 (no parity)
+    if (set_interface_attribs(fd, B9600, 0) < 0) {  // set speed to 9,600 bps, 8n1 (no parity)
         return false;
     }
     if (set_blocking(fd, true) < 0) { // set no blocking
